@@ -2,6 +2,7 @@ zpr
 ===
 
 Katalogi:
+
 	- lighttpd 
 	lighttpd.conf - plik konfiguracyjny lighttpd; w linijce "server.document-root" trzeba ustawić ścieżkę do katalogu z plikiem "index.html"
 	lighttpd odpalamy w tym katalogu poleceniem: lighttpd -D -f ./lighttpd.conf
