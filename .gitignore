@@ -1,0 +1,4 @@
+fcgi.conf
+lighttpd.conf
+*.o
+*.so

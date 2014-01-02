@@ -1,0 +1,9 @@
+# Requirement for the project
+#
+# Non-python requirements - needs to be installed manually
+# - FastCGI module, usually called fcgi in repository (fastcgi + lighttpd-enable-mod in Debian based distributions)
+
+# Python requirement - run "pip -r requirements.txt" after all above is installed
+flup==1.0.2     # For fcgi
+wsgiref==0.1.2
+
