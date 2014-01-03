@@ -9,6 +9,6 @@ cancelNotification = ->
 
 @notify = (message, time) ->
 	notification = $("#notification")
-	notification.text message
+	notification.html message
 	setTimeout showNotification, 200
 	setTimeout cancelNotification, 200+time

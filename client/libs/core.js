@@ -18,7 +18,7 @@
   this.notify = function(message, time) {
     var notification;
     notification = $("#notification");
-    notification.text(message);
+    notification.html(message);
     setTimeout(showNotification, 200);
     return setTimeout(cancelNotification, 200 + time);
   };
