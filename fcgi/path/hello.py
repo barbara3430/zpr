@@ -3,7 +3,7 @@ import cgi
 import string
 import userbase
 
-def myapp(environ, start_response):
+def hello(environ, start_response):
         print('got request: %s' % environ)
         start_response('200 OK', [('Content-Type', 'text/plain')])
         # Create instance of FieldStorage
@@ -31,6 +31,3 @@ def myapp(environ, start_response):
         print("Content-type:text/html\r\n\r\n")
         return result
 
-if __name__ == '__main__':
-    from flup.server.fcgi import WSGIServer
-    WSGIServer(myapp).run()

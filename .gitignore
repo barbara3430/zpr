@@ -2,3 +2,5 @@ fcgi.conf
 lighttpd.conf
 *.o
 *.so
+*.pyc
+users.txt
