@@ -12,15 +12,41 @@
   cancelNotification = function() {
     var notification;
     notification = $("#notification");
-    return notification.removeClass('in');
+    notification.removeClass('in');
+    if (notification.hasClass('error')) {
+      setTimeout((function() {
+        return notification.removeClass('error');
+      }), 200);
+    }
+    if (notification.hasClass('warning')) {
+      return setTimeout((function() {
+        return notification.removeClass('warning');
+      }), 200);
+    }
   };
 
-  this.notify = function(message, time) {
+  this.notify = function(message, time, state) {
     var notification;
+    if (state == null) {
+      state = notify.normal;
+    }
     notification = $("#notification");
+    switch (state) {
+      case notify.error:
+        notification.addClass('error');
+        break;
+      case notify.warning:
+        notification.addClass('warning');
+    }
     notification.html(message);
     setTimeout(showNotification, 200);
     return setTimeout(cancelNotification, 200 + time);
   };
+
+  this.notify.normal = 0;
+
+  this.notify.warning = 1;
+
+  this.notify.error = 2;
 
 }).call(this);

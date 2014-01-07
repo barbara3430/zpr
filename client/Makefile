@@ -7,4 +7,4 @@ core.js:
 	@echo "Making coffee..."; coffee --join ./libs/core.js --compile ./src/coffee/*.coffee;
 
 core.css:
-	@echo "Compiling stylesheet..."; lessc styles/core.less libs/core.css
+	@echo "Compiling stylesheet..."; lessc src/less/core.less libs/core.css

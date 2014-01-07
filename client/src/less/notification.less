@@ -2,12 +2,13 @@
 @warning-background: #C0C030;
 @error-background: #D05050;
 @error-text: #F0F0F0;
+@round-corner: 10px;
 
 #notification.flyover {
 	background-color: @normal-background;
 	opacity: 0.9;
-	border-top-left-radius: 10px;
-	border-bottom-left-radius: 10px;
+	border-top-left-radius: @round-corner;
+	border-bottom-left-radius: @round-corner;
 	position: fixed;
 	overflow: hidden;
 	left: 150%;
