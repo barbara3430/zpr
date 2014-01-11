@@ -2,6 +2,36 @@
 (function() {
   var cancelNotification, showNotification;
 
+  this.setCookie = function(name, value, days) {
+    var date, expires;
+    if (days) {
+      date = new Date();
+      date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+      expires = "; expires=" + (date.toGMTString());
+    } else {
+      expires = "";
+    }
+    return document.cookie = name + "=" + value + expires + "; path=/";
+  };
+
+  this.getCookie = function(name) {
+    var cookie, cookies, eq, raw_cookie, _i, _len;
+    cookies = document.cookie.split(';');
+    for (_i = 0, _len = cookies.length; _i < _len; _i++) {
+      raw_cookie = cookies[_i];
+      cookie = $.trim(raw_cookie);
+      eq = cookie.indexOf('=');
+      if (cookie.slice(0, eq) === name) {
+        return cookie.slice(eq + 1);
+      }
+    }
+    return null;
+  };
+
+  this.deleteCookie = function(name) {
+    return createCookie(name, "", -1);
+  };
+
   showNotification = function() {
     var notification;
     notification = $("#notification");
