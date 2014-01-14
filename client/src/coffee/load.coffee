@@ -1,3 +1,8 @@
+# Note that most modern browsers will raise error if page address is
+# other than localhost. 
+# '127.0.0.1' can cause errors as it may think it's trying to access
+# resources from other web page. That is forbidden.
+
 host = "http://localhost:3000/"
 # Fetch page
 # TODO: error handling
