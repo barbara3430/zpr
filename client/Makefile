@@ -4,7 +4,7 @@ all: folder dependencies html core.js core.css
 	@echo "Ready"
 
 html:
-	@echo "Copying page templates..."; cp index.html bin/index.html
+	@echo "Copying page templates..."; cp -R static/*  bin/
 
 core.js:
 	@echo "Making coffee..."; coffee --join ./bin/libs/core.js --compile ./src/coffee/*.coffee;
