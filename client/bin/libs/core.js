@@ -87,17 +87,16 @@
   };
 
   $(function() {
-    var login, loginForm;
+    var login;
     _this.username = null;
-    loginForm = $('input[name="login"]');
     login = getCookie("username");
     if (login != null) {
-      loginForm.val(login);
+      $('input[name="login"]').val(login);
       $('input[name="remember-me"]').prop('checked', true);
     } else {
-      notify("<h1>Welcome</h1><div>Hello, please sign in.</div>", 3500);
+      notify("<h1>Welcome</h1><div>Please sign in</div>", 3000);
     }
-    return loginForm.submit(logIn);
+    return $('#form-signin').submit(logIn);
   });
 
   showNotification = function() {

@@ -25,3 +25,12 @@ cancelNotification = ->
 @notify.normal = 0
 @notify.warning = 1
 @notify.error = 2
+
+$ ->
+	ntf = $('<div>')
+	ntf.attr 'id', 'notification'
+	ntf.html '<h2>Welcome</h2><div>Please sign in</div>'
+	ntf.addClass 'jumbotron'
+	ntf.addClass 'flyover'
+	ntf.addClass 'flyover-centered'
+	ntf.appendTo $('body')

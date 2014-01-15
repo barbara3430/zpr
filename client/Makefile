@@ -22,11 +22,13 @@ bin/libs: bin
 bin/styles: bin
 	@mkdir -p bin/styles
 
-dependencies: bin/libs/bootstrap.js bin/libs/jquery.js bin/styles/bootstrap.css
+dependencies: bin/libs/bootstrap.js bin/libs/jquery.js bin/styles/bootstrap.css bin/libs/jquery.min.map
 bin/libs/bootstrap.js:
 	@cp libs/bootstrap/js/bootstrap.min.js $@
 bin/libs/jquery.js:
 	@cp libs/jquery/jquery.min.js $@
+bin/libs/jquery.min.map:
+	@cp libs/jquery/jquery.min.map $@
 bin/styles/bootstrap.css:
 	@cp libs/bootstrap/css/bootstrap.min.css $@
 
