@@ -13,7 +13,7 @@
 
 loginSuccess = (data) ->
 	@username = data.response
-	loadURL data.lobby
+	loadContent "/lobby.html"
 
 $ =>
 	@username = null
