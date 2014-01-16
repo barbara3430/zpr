@@ -2,6 +2,7 @@
 
 updateNames = () -> load 'updateNames', []
 
+@callback = [] if not @callback?
 @callback.refreshNames = (data) ->
 	nameList = for name in data.names
 		"<li> #{name} - Ready </li>"
