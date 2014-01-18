@@ -1,0 +1,37 @@
+@normal-background: #C0C0FF;
+@warning-background: #C0C030;
+@error-background: #D05050;
+@error-text: #F0F0F0;
+@round-corner: 10px;
+
+#notification.flyover {
+	background-color: @normal-background;
+	opacity: 0.9;
+	border-top-left-radius: @round-corner;
+	border-bottom-left-radius: @round-corner;
+	position: fixed;
+	overflow: hidden;
+	left: 150%;
+	width: 50%;
+	z-index: 1050;
+	transition: left 0.6s ease-out 0s;
+}
+					  
+#notification.flyover-centered {
+	bottom: 10%;
+	transform: translate(-50%, -50%);
+}
+
+#notification.flyover.in {
+	left: 50%;
+}
+
+#notification.warning {
+	background-color: @warning-background;
+}
+#notification.error {
+	background-color: @error-background;
+	color: @error-text;
+}
+
+
