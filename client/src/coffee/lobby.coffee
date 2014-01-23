@@ -9,4 +9,5 @@ updateNames = () -> load 'updateNames', []
 	names = namesList.join ' '
 
 	$("#player-list").html names
+	setTimeout updateNames, 1000
 

@@ -14,6 +14,7 @@
 loginSuccess = (data) ->
 	@username = data.response
 	loadContent "/lobby.html"
+	refreshNames()
 
 $ =>
 	@username = null

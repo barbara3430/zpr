@@ -7,7 +7,7 @@ host = "http://localhost:3000/"
 hostJSON = host + '/test' # TODO fill address.
 # Fetch page
 # TODO: error handling
-@loadContent = (url, parameters) ->
+@loadContent = (url, parameters=null) ->
 	$.ajax
 		type: 'POST'
 		url: host + url # Will think about this later
