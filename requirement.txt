@@ -1,6 +1,6 @@
 # Requirement for the project
 #
-# Non-python requirements - needs to be installed manually
+# Non-python requirements - need to be installed manually
 # - FastCGI module, usually called fcgi in repository (fastcgi + lighttpd-enable-mod in Debian based distributions)
 
 # Python requirement - run "pip install -r requirements.txt" after all above is installed

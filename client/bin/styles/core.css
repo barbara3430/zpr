@@ -65,6 +65,23 @@ form-signin .form-signin-heading,
 .lobby-stats {
   padding: 15px;
 }
+.cards {
+  padding: 15px;
+  margin: 0 auto;
+}
+.card-border {
+  height: 220px;
+  width: 140px;
+  display: inline;
+}
+.gameblock {
+  padding: 15px;
+}
+.control {
+  display: inline;
+  max-width: 260px;
+  padding: 5;
+}
 body {
   padding-top: 40px;
   padding-bottom: 40px;

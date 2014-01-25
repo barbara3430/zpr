@@ -9,10 +9,11 @@ hostJSON = host + '/test' # TODO fill address.
 # TODO: error handling
 @loadContent = (url, parameters=null) ->
 	$.ajax
-		type: 'POST'
+		type: 'GET'
 		url: host + url # Will think about this later
 		data: parameters
 		success: (data) -> $("#content").replaceWith(data)
+		error: (_, __, text) -> notify "Error while connecting to the server", 2500, notify.error
 		async: false
 
 # JSON request

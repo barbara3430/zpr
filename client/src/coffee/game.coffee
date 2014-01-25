@@ -9,17 +9,31 @@
 	renderState data.others
 
 @callback.refreshState = (data) ->
-	renderState data.others
-	setTimeout updateGame, 1000
+	game.render data.others
+	setTimeout game.update, 1000
 
 @callback.finishGame = (data) ->
 	# TODO game finalization.
 
-renderState = (data) ->
+game.render = (data) ->
 	div = for player in data
 		"<li> #{player.name}($#{player.account}) current bid: $#{player.bid} and player #{player.state} </li>"
 	div.join " "
 	$("#game-state").replaceWith div
 
-updateGame = () ->
+game.update = () ->
 	load 'updateGame'
+
+game.bid = () ->
+	newBid = $('input[name=""]').val()
+	parameters = [
+		bid: newBid
+	]
+	load 'bid', parameters
+
+game.pass = () ->
+	load 'pass', null
+	$('.control').attr 'disabled', true
+
+game.change = () ->
+	# TODO: card changing

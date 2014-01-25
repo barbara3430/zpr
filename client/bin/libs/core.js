@@ -78,12 +78,18 @@
   hostJSON = host + '/test';
 
   this.loadContent = function(url, parameters) {
+    if (parameters == null) {
+      parameters = null;
+    }
     return $.ajax({
-      type: 'POST',
+      type: 'GET',
       url: host + url,
       data: parameters,
       success: function(data) {
         return $("#content").replaceWith(data);
+      },
+      error: function(_, __, text) {
+        return notify(text, 2500, notify.error);
       },
       async: false
     });
