@@ -37,19 +37,26 @@ game.pass = () ->
 	$('.control').attr 'disabled', true
 
 game.setCards = (data) ->
-	unless game.cards?
-		$.ajax
-			type: 'GET'
-			url: host + 'cards.svg'
-			success: (data)->game.cards = $(data)
-			dataType: 'xml'
-			async: false
+	game.cards = data
+	game.replaced = []
 
 	i = 0
 	cards = for card in data
-		"<div class=\"card-border\" id=\"card-border-#{++i}\"><div class=\"card\" id=\"card-#{i}\"><img src=\"/cards/#{card}.png\"></div></div>"
+		"<div class=\"card-border\" id=\"card-border-#{++i}\" onClick=\"game.toggleCardReplace(#{card}, #{i})\">
+		<div class=\"card\" id=\"card-#{i}\" onDrop=\"drop(event)\" onDragOver=\"dragOver(event)\">
+		<img id=\"image-#{i}\" draggable=\"true\" onDragStart=\"drag(event)\" src=\"/cards/#{card}.png\">
+		</div>
+		</div>"
 	cards.join ' '
 	$('#cards').html cards
 
 game.change = () ->
-	# TODO: card changing
+	load 'replaceCards', game.replaced
+
+game.toggleCardReplace = (number, i) ->
+	unless number in game.replaced
+		game.replaced.push number
+		$("#card-#{i}").addClass 'card-replace'
+	else
+		game.replaced = game.replaced.filter (id) -> id isnt number
+		$("#card-#{i}").removeClass 'card-replace'

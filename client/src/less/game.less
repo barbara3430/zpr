@@ -1,5 +1,6 @@
 @borderheigth: 106px;
 @borderwidth: 78px;
+@border: 1px;
 @background: #0f800f;
 @background-light: #1f901f;
 @radius: 5px;
@@ -23,6 +24,12 @@
 	border-top-right-radius: @radius;
 	border-bottom-right-radius: @radius;
 }
+
+.card {
+	background: @background;
+    border: @border solid @background;
+}
+
 .card-border {
 	max-height: @borderheigth;
 	max-width: @borderwidth;
@@ -35,7 +42,7 @@
 }
 
 .card-replace {
-	border: 2px solid #dadada;
+	border: @border solid #dadada;
 	border-radius: 7px;
 	outline: none;
 	border-color: @redborder;

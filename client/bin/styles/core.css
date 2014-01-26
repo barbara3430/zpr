@@ -81,6 +81,10 @@ form-signin .form-signin-heading,
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
 }
+.card {
+  background: #0f800f;
+  border: 1px solid #0f800f;
+}
 .card-border {
   max-height: 106px;
   max-width: 78px;
@@ -92,7 +96,7 @@ form-signin .form-signin-heading,
   background: #1f901f;
 }
 .card-replace {
-  border: 2px solid #dadada;
+  border: 1px solid #dadada;
   border-radius: 7px;
   outline: none;
   border-color: #d04040;
