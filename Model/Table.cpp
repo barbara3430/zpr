@@ -62,6 +62,7 @@ void Table::initDeck()
 
 void Table::newGame()
 {
+    std::cout << "1" << std::flush;
 	game_data.in_game = true;
 	game_data.turn_min_bet = ANTE;
 	//game_data.last_raise = 0;
@@ -69,7 +70,7 @@ void Table::newGame()
 	game_data.player_turn = game_data.start_player;
 	//wyczysc tabele wygranych
 	winners.clear();
-
+std::cout << "2" << std::flush;
 	initDeck();
 
 	for(std::vector<Player>::iterator it = players.begin(); it != players.end(); ++it) {
@@ -77,17 +78,20 @@ void Table::newGame()
 		it->all_in = false;
 		it->bet_this_turn = 0;
 	}
-
+std::cout << "3" << std::flush;
 	activate_player(game_data.player_turn);
-
+std::cout << "4" << std::flush;
 	//pobierz ante
 	for(unsigned i=0; i<MAX_SEATS; ++i){
-		if(players[i].cash_available >= ANTE)
+    std::cout << "5" << std::flush;
+        if(players[i].cash_available >= ANTE) {
+    std::cout << "6" << std::flush;
 		  playerRaise(players[i].seat, ANTE);
+        }
 		else
 		  playerAllIn(i);	    
 	}
-
+std::cout << "5" << std::flush;
 	game_data.state = START; //poczatek gry - po ante
 
 	//rozdaj nowe karty
@@ -105,6 +109,7 @@ void Table::newGame()
 
 void Table::activate_player(unsigned s)
 {
+    std::cout<<"Player activated";
 	for(std::vector<Player>::iterator it = players.begin(); it != players.end(); ++it) {
 	    if(it->seat == s)
 	      it->is_active = true;
@@ -353,16 +358,34 @@ void Table::getWinners()
 	}
 }
 
-bool Table::addPlayer()
+//bool Table::addPlayer()
+//{
+//    std::cout << "1P" << std::endl << std::flush;
+//    if(players.size() < MAX_SEATS) {
+//      //pobierz nr siedzenia (i tym samym nazwe)
+//        std::cout << "2P" << std::endl << std::flush;
+//      unsigned s = abs(players[0].seat - 1);
+//      std::cout << "3P" << std::endl << std::flush;
+//      players.push_back(Player(s));
+//      return true;
+//    }
+//    return false;
+//}
+
+bool Table::addPlayer(std::string n)
 {
-    if(players.size() < MAX_SEATS) {    
-      //pobierz nr siedzenia (i tym samym nazwe)
-      unsigned s = abs(players[0].seat - 1);
+    if(players.size() < MAX_SEATS) {
+      unsigned s;
+      if(players.size() == 0)
+    s = 0;
+      else
+    s = abs(players[0].seat - 1);
       players.push_back(Player(s));
       return true;
     }
     return false;
 }
+
 
 bool Table::playerChange(unsigned seat, std::vector<unsigned> cards){
   	unsigned ind = 2;
