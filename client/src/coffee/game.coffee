@@ -6,7 +6,8 @@
 @callback.startGame = (data) ->
 	@loadContent "game.html"
 	@game.currentPlayer = new Player(data.player.name, data.player.account, data.player.cards)
-	renderState data.others
+	@callback.renderState data.others
+	game.setCards data.player.cards
 
 @callback.refreshState = (data) ->
 	game.render data.others
@@ -34,6 +35,21 @@ game.bid = () ->
 game.pass = () ->
 	load 'pass', null
 	$('.control').attr 'disabled', true
+
+game.setCards = (data) ->
+	unless game.cards?
+		$.ajax
+			type: 'GET'
+			url: host + 'cards.svg'
+			success: (data)->game.cards = $(data)
+			dataType: 'xml'
+			async: false
+
+	i = 0
+	cards = for card in data
+		"<div class=\"card-border\" id=\"card-border-#{++i}\"><div class=\"card\" id=\"card-#{i}\"><img src=\"/cards/#{card}.png\"></div></div>"
+	cards.join ' '
+	$('#cards').html cards
 
 game.change = () ->
 	# TODO: card changing

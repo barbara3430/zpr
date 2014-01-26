@@ -1,13 +1,8 @@
 <div class="container-fluid core_container" id="content">
 	<div id="game-state"></div>
 	<div id="player-state"></div>
-	<div id="cards" class="cards">
-		<div class="card-border card-ok" id="card-border-1"><div class="card" id="card-1"></div></div>
-		<div class="card-border card-ok" id="card-border-2"><div class="card" id="card-2"></div></div>
-		<div class="card-border card-ok" id="card-border-3"><div class="card" id="card-3"></div></div>
-		<div class="card-border card-ok" id="card-border-4"><div class="card" id="card-4"></div></div>
-		<div class="card-border card-ok" id="card-border-5"><div class="card" id="card-5"></div></div>
-	</div>
+	<div id="text">Your cards</div>
+	<div id="cards" class="cards"></div>
 	<div id="rundcontrol" class="gameblock">
 		<button class="btn btn-default btn-primary btn-block control" type="button" id="passbutton" onClick="game.pass()"  value="passgame">Pass</button>
 		<input type="number" name="bid" value="game.currentBid()" class=" control">

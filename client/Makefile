@@ -5,6 +5,7 @@ all: folder dependencies html core.js core.css
 
 html:
 	@echo "Copying page templates..."; cp -R static/*  bin/
+	@cp cards/* bin/cards
 
 core.js:
 	@echo "Making coffee..."; coffee --join ./bin/libs/core.js --compile ./src/coffee/*.coffee;
@@ -13,7 +14,7 @@ core.css:
 	@echo "Compiling stylesheet..."; lessc src/less/core.less ./bin/styles/core.css
 
 # Dirty hack, but works
-folder: | bin/libs bin/styles
+folder: | bin/libs bin/styles bin/cards
 bin:
 	@echo "Creating folder structure..."
 	@mkdir -p bin
@@ -21,6 +22,8 @@ bin/libs: bin
 	@mkdir -p bin/libs
 bin/styles: bin
 	@mkdir -p bin/styles
+bin/cards: bin
+	@mkdir -p bin/cards
 
 dependencies: bin/libs/bootstrap.js bin/libs/jquery.js bin/styles/bootstrap.css bin/libs/jquery.min.map
 bin/libs/bootstrap.js:

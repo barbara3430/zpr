@@ -1,16 +1,45 @@
-@borderheigth: 220px;
-@borderwidth: 140px;
+@borderheigth: 106px;
+@borderwidth: 78px;
+@background: #0f800f;
+@background-light: #1f901f;
+@radius: 5px;
+@redborder: #d04040;
 @width: 260px;
 
-.cards {
+#text {
 	padding: 15px;
-	margin: 0 auto;
 }
 
-.card-border {
-	height: @borderheigth;
-	width: @borderwidth;
+.cards {
 	display: inline;
+	padding: 15px;
+	margin: 10px auto;
+}
+#card-border-1 {
+	border-top-left-radius: @radius;
+	border-bottom-left-radius: @radius;
+}
+#card-border-5 {
+	border-top-right-radius: @radius;
+	border-bottom-right-radius: @radius;
+}
+.card-border {
+	max-height: @borderheigth;
+	max-width: @borderwidth;
+	display: inline-block;
+	padding: 15px;
+	background: @background;
+}
+.card-border:hover {
+	background: @background-light;
+}
+
+.card-replace {
+	border: 2px solid #dadada;
+	border-radius: 7px;
+	outline: none;
+	border-color: @redborder;
+	box-shadow: 0 0 10px @redborder;
 }
 .gameblock {
 	padding: 15px;
