@@ -3,24 +3,48 @@
 @callback = [] if not @callback?
 @game = [] if not @game?
 
-@callback.startGame = (data) ->
+@callback.startGame = (data) =>
 	@loadContent "game.html"
-	@game.currentPlayer = new Player(data.player.name, data.player.account, data.player.cards)
-	@callback.renderState data.others
+	@game.accountVal = data.player.account
+	@game.bidVal = 0
+	@game.renderPlayer data.player
+	@game.renderState data.others
 	game.setCards data.player.cards
 
-@callback.refreshState = (data) ->
+@callback.refreshState = (data) =>
+	@game.refreshState data
+@callback.renderPlayer = (data) ->
+	game.renderPlayer data
+@callback.finishGame = (data) =>
+	@game.finishGame data
+
+@game.refreshState = (data) ->
 	game.render data.others
 	setTimeout game.update, 1000
 
-@callback.finishGame = (data) ->
-	# TODO game finalization.
 
-game.render = (data) ->
+@game.finishGame = (data) ->
+	if data.won is true  # TODO check
+		notify "You win!", 3000
+	else
+		notify "You loose!", 3000, notify.warning
+@game.username = @username
+@game.renderPlayer = (data) ->
+	if data?
+		@bidVal = data.bid if data.bid?
+		@accountVal = data.account if data.account?
+	div = "
+	<div>#{@username}:</div>
+	<div> Account: #{@accountVal}</div>
+	<div> Bid: #{@bidVal}</div>
+	"
+	$('#player-state').html div
+
+game.renderState = (data) ->
 	div = for player in data
 		"<li> #{player.name}($#{player.account}) current bid: $#{player.bid} and player #{player.state} </li>"
 	div.join " "
-	$("#game-state").replaceWith div
+	$("#game-state").replaceWith '<ul class="list">' + div + '</ul>'
 
 game.update = () ->
 	load 'updateGame'

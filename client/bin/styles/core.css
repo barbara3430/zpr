@@ -65,8 +65,11 @@ form-signin .form-signin-heading,
 .lobby-stats {
   padding: 15px;
 }
-#text {
+.text {
   padding: 15px;
+}
+.list {
+  list-style-type: none;
 }
 .cards {
   display: inline;
@@ -111,7 +114,7 @@ form-signin .form-signin-heading,
   padding: 5;
 }
 body {
-  padding-top: 40px;
+  padding-top: 60px;
   padding-bottom: 40px;
   background-color: #eee;
 }
