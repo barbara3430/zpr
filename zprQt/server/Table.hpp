@@ -73,11 +73,11 @@ private:
 	/**
 	  * aktywacja nastepnego gracza wzgledem siedzen
 	  */
-	void prv_activateNext();
+	//void prv_activateNext();
 	/**
 	  * aktywacja gracza na konkretnym siedzeniu
 	  */
-	void prv_activate(unsigned);
+	//void prv_activate(unsigned);
 	/**
 	  * pobranie numeru siedzenia obecnie aktywnego gracza
 	  */
@@ -102,11 +102,11 @@ private:
 	/**
 	  * wywolanie nowej gry
 	  */
-	void prv_newGame();
+	//void prv_newGame();
 	/**
 	  * sprawdzenie i ew. operacje przy zmianie stanu gry
 	  */
-	void prv_checkNextTurn();
+	//void prv_checkNextTurn();
 	/**
 	  * stworzenie tabeli wygranych
 	  */
@@ -122,7 +122,7 @@ private:
 	/**
 	  * operacje zwiazane z koncem gry
 	  */
-	void prv_endGame();
+	//void prv_endGame();
 	/**
 	  * proba wkupienia sie gracza
 	  */
@@ -146,31 +146,31 @@ private:
 	/**
 	  * pobranie kolejnej karty z talii
 	  */
-	unsigned prv_pickCard();
+	//unsigned prv_pickCard();
 	/**
 	  * potasowanie talii
 	  */
-	void prv_initDeck();
+	//void prv_initDeck();
 	/**
 	  * proba podbicia przez gracza
 	  */
-	bool prv_playerRaise(std::string, unsigned);
+	//bool prv_playerRaise(std::string, unsigned);
 	/**
 	  * proba sprawdzenia przez gracza
 	  */
-	bool prv_playerCheck(std::string);
+	//bool prv_playerCheck(std::string);
 	/**
 	  * proba spasowania przez gracza
 	  */
-	bool prv_playerFold(std::string);
+	//bool prv_playerFold(std::string);
 	/**
 	  * proba wejscia za wszystko przez gracza
 	  */
-	bool prv_playerAllIn(std::string);
+	//bool prv_playerAllIn(std::string);
 	/**
 	  * resetuje sprawdzanie akcji gdy ktos podbije
 	  */
-	void prv_resetActions(unsigned);
+	//void prv_resetActions(unsigned);
 	/**
 	  * wysyla wszystkim karte ze stolu
 	  */
