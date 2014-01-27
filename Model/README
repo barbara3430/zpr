@@ -1,0 +1,9 @@
+kompilacja : make
+
+używanie z Pythonem:
+
+import Model
+
+Model.addPlayer("player1)
+Model.addPlayer("player2)
+Model.newGame()
