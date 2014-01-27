@@ -13,7 +13,7 @@
 
 loginSuccess = (data) ->
 	@username = data.response
-	loadContent "/lobby.html"
+	@loadContent "/lobby.html"
 	@callback.refreshNames()
 
 $ =>

@@ -8,26 +8,27 @@
 	@game.accountVal = data.player.account
 	@game.bidVal = data.player.bid
 	@game.renderPlayer data.player
-	@game.renderState data.others
+	@game.refreshState data.others
 	@game.setCards data.player.cards
 
-@callback.refreshState = (data) =>
-	@game.refreshState data
-@callback.renderPlayer = (data) ->
-	game.renderPlayer data
-@callback.finishGame = (data) =>
-	@game.finishGame data
+@callback.setCards = (data) => @game.setCards data
+@callback.refreshState = (data) => @game.refreshState data
+@callback.renderPlayer = (data) => @game.renderPlayer data
+@callback.finishGame = (data) => @game.finishGame data
 
 @game.refreshState = (data) ->
-	game.render data.others
+	game.renderState data.others
 	setTimeout game.update, 1000
 
 
-@game.finishGame = (data) ->
+@game.finishGame = (data) =>
 	if data.won is true  # TODO check
 		notify "You win!", 3000
 	else
 		notify "You loose!", 3000, notify.warning
+	@loadContent 'lobby.html'
+	@load 'updateNames'
+
 @game.username = @username
 @game.renderPlayer = (data) ->
 	if data?
@@ -54,10 +55,10 @@ game.bid = () ->
 	parameters = [
 		bid: newBid
 	]
-	load 'bid', parameters
+	load 'playerRaise', parameters
 
 game.pass = () ->
-	load 'pass', null
+	load 'playerFold', null
 	$('.control').attr 'disabled', true
 
 game.setCards = (data) ->
@@ -79,7 +80,7 @@ game.setCards = (data) ->
 
 game.change = () ->
 	parameters = [replaced: [@cards[x] for x in @replaced]]
-	load 'replaceCards', parameters
+	load 'playerChange', parameters
 
 game.toggleCardReplace = (i) ->
 	unless i in game.replaced
@@ -89,5 +90,5 @@ game.toggleCardReplace = (i) ->
 		game.replaced = game.replaced.filter (id) -> id isnt i
 		$("#card-#{i}").removeClass 'card-replace'
 
-game.allIn = () -> load 'allIn'
-game.check = () -> load 'check'
+game.allIn = () -> load 'playerAllIn'
+game.check = () -> load 'playerCheck'

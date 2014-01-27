@@ -47,8 +47,12 @@
     _this.game.accountVal = data.player.account;
     _this.game.bidVal = data.player.bid;
     _this.game.renderPlayer(data.player);
-    _this.game.renderState(data.others);
+    _this.game.refreshState(data.others);
     return _this.game.setCards(data.player.cards);
+  };
+
+  this.callback.setCards = function(data) {
+    return _this.game.setCards(data);
   };
 
   this.callback.refreshState = function(data) {
@@ -56,7 +60,7 @@
   };
 
   this.callback.renderPlayer = function(data) {
-    return game.renderPlayer(data);
+    return _this.game.renderPlayer(data);
   };
 
   this.callback.finishGame = function(data) {
@@ -64,16 +68,18 @@
   };
 
   this.game.refreshState = function(data) {
-    game.render(data.others);
+    game.renderState(data.others);
     return setTimeout(game.update, 1000);
   };
 
   this.game.finishGame = function(data) {
     if (data.won === true) {
-      return notify("You win!", 3000);
+      notify("You win!", 3000);
     } else {
-      return notify("You loose!", 3000, notify.warning);
+      notify("You loose!", 3000, notify.warning);
     }
+    _this.loadContent('lobby.html');
+    return _this.load('updateNames');
   };
 
   this.game.username = this.username;
@@ -119,11 +125,11 @@
         bid: newBid
       }
     ];
-    return load('bid', parameters);
+    return load('playerRaise', parameters);
   };
 
   game.pass = function() {
-    load('pass', null);
+    load('playerFold', null);
     return $('.control').attr('disabled', true);
   };
 
@@ -168,7 +174,7 @@
         ]
       }
     ];
-    return load('replaceCards', parameters);
+    return load('playerChange', parameters);
   };
 
   game.toggleCardReplace = function(i) {
@@ -184,11 +190,11 @@
   };
 
   game.allIn = function() {
-    return load('allIn');
+    return load('playerAllIn');
   };
 
   game.check = function() {
-    return load('check');
+    return load('playerCheck');
   };
 
   host = "http://localhost:3000/";
@@ -296,7 +302,7 @@
 
   loginSuccess = function(data) {
     this.username = data.response;
-    loadContent("/lobby.html");
+    this.loadContent("/lobby.html");
     return this.callback.refreshNames();
   };
 
