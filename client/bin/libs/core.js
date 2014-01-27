@@ -183,6 +183,14 @@
     }
   };
 
+  game.allIn = function() {
+    return load('allIn');
+  };
+
+  game.check = function() {
+    return load('check');
+  };
+
   host = "http://localhost:3000/";
 
   hostJSON = host + 'test';

@@ -88,3 +88,6 @@ game.toggleCardReplace = (i) ->
 	else
 		game.replaced = game.replaced.filter (id) -> id isnt i
 		$("#card-#{i}").removeClass 'card-replace'
+
+game.allIn = () -> load 'allIn'
+game.check = () -> load 'check'
