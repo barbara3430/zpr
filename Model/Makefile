@@ -19,4 +19,4 @@ $(TARGET).so: $(OBJ_FILES)
 #mybinary: Card.o Hand.o Player.o Table.o
 
 %.o: %.cpp
-	g++ -I$(PYTHON_INCLUDE) -I$(BOOST_INC) -fPIC -c $< -o $@
+	g++ -I$(PYTHON_INCLUDE) -I$(BOOST_INC) -fPIC -c $< -o $@ -ljson
