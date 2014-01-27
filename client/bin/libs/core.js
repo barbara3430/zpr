@@ -47,7 +47,7 @@
     _this.game.accountVal = data.player.account;
     _this.game.bidVal = data.player.bid;
     _this.game.renderPlayer(data.player);
-    _this.game.refreshState(data.others);
+    _this.game.refreshState(data);
     return _this.game.setCards(data.player.cards);
   };
 

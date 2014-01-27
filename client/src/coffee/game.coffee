@@ -8,7 +8,7 @@
 	@game.accountVal = data.player.account
 	@game.bidVal = data.player.bid
 	@game.renderPlayer data.player
-	@game.refreshState data.others
+	@game.refreshState data
 	@game.setCards data.player.cards
 
 @callback.setCards = (data) => @game.setCards data
