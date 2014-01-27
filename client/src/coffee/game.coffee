@@ -61,12 +61,15 @@ game.pass = () ->
 	$('.control').attr 'disabled', true
 
 game.setCards = (data) ->
-	game.cards = data
+	game.cards = {}
+	i = 0
+	for x in data
+		game.cards[++i] = x
 	game.replaced = []
 
 	i = 0
 	cards = for card in data
-		"<div class=\"card-border\" id=\"card-border-#{++i}\" onClick=\"game.toggleCardReplace(#{card}, #{i})\">
+		"<div class=\"card-border\" id=\"card-border-#{++i}\" onClick=\"game.toggleCardReplace(#{i})\">
 		<div class=\"card\" id=\"card-#{i}\" onDrop=\"drop(event)\" onDragOver=\"dragOver(event)\">
 		<img id=\"image-#{i}\" draggable=\"true\" onDragStart=\"drag(event)\" src=\"/cards/#{card}.png\">
 		</div>
@@ -75,12 +78,13 @@ game.setCards = (data) ->
 	$('#cards').html cards
 
 game.change = () ->
-	load 'replaceCards', game.replaced
+	parameters = [replaced: [@cards[x] for x in @replaced]]
+	load 'replaceCards', parameters
 
-game.toggleCardReplace = (number, i) ->
-	unless number in game.replaced
-		game.replaced.push number
+game.toggleCardReplace = (i) ->
+	unless i in game.replaced
+		game.replaced.push i
 		$("#card-#{i}").addClass 'card-replace'
 	else
-		game.replaced = game.replaced.filter (id) -> id isnt number
+		game.replaced = game.replaced.filter (id) -> id isnt i
 		$("#card-#{i}").removeClass 'card-replace'

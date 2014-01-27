@@ -13,10 +13,15 @@
 	target = targetId.split '-'
 
 	if source[0] is 'image' and target[0] is 'image'
-		source = $('#'+sourceId).attr 'src'
-		target = $('#'+targetId).attr 'src'
-		$('#'+sourceId).attr 'src', target
-		$('#'+targetId).attr 'src', source
+		sourceSRC = $('#'+sourceId).attr 'src'
+		targetSRC = $('#'+targetId).attr 'src'
+
+		$('#'+sourceId).attr 'src', targetSRC
+		$('#'+targetId).attr 'src', sourceSRC
+
+		i = @game.cards[target[1]]
+		@game.cards[target[1]] = @game.cards[source[1]]
+		@game.cards[source[1]] = i
 
 
 @dragOver = (event) -> event.preventDefault()

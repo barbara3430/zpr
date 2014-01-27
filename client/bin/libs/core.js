@@ -128,16 +128,21 @@
   };
 
   game.setCards = function(data) {
-    var card, cards, i;
-    game.cards = data;
+    var card, cards, i, x, _i, _len;
+    game.cards = {};
+    i = 0;
+    for (_i = 0, _len = data.length; _i < _len; _i++) {
+      x = data[_i];
+      game.cards[++i] = x;
+    }
     game.replaced = [];
     i = 0;
     cards = (function() {
-      var _i, _len, _results;
+      var _j, _len1, _results;
       _results = [];
-      for (_i = 0, _len = data.length; _i < _len; _i++) {
-        card = data[_i];
-        _results.push("<div class=\"card-border\" id=\"card-border-" + (++i) + "\" onClick=\"game.toggleCardReplace(" + card + ", " + i + ")\">		<div class=\"card\" id=\"card-" + i + "\" onDrop=\"drop(event)\" onDragOver=\"dragOver(event)\">		<img id=\"image-" + i + "\" draggable=\"true\" onDragStart=\"drag(event)\" src=\"/cards/" + card + ".png\">		</div>		</div>");
+      for (_j = 0, _len1 = data.length; _j < _len1; _j++) {
+        card = data[_j];
+        _results.push("<div class=\"card-border\" id=\"card-border-" + (++i) + "\" onClick=\"game.toggleCardReplace(" + i + ")\">		<div class=\"card\" id=\"card-" + i + "\" onDrop=\"drop(event)\" onDragOver=\"dragOver(event)\">		<img id=\"image-" + i + "\" draggable=\"true\" onDragStart=\"drag(event)\" src=\"/cards/" + card + ".png\">		</div>		</div>");
       }
       return _results;
     })();
@@ -146,16 +151,33 @@
   };
 
   game.change = function() {
-    return load('replaceCards', game.replaced);
+    var parameters, x;
+    parameters = [
+      {
+        replaced: [
+          (function() {
+            var _i, _len, _ref, _results;
+            _ref = this.replaced;
+            _results = [];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              x = _ref[_i];
+              _results.push(this.cards[x]);
+            }
+            return _results;
+          }).call(this)
+        ]
+      }
+    ];
+    return load('replaceCards', parameters);
   };
 
-  game.toggleCardReplace = function(number, i) {
-    if (__indexOf.call(game.replaced, number) < 0) {
-      game.replaced.push(number);
+  game.toggleCardReplace = function(i) {
+    if (__indexOf.call(game.replaced, i) < 0) {
+      game.replaced.push(i);
       return $("#card-" + i).addClass('card-replace');
     } else {
       game.replaced = game.replaced.filter(function(id) {
-        return id !== number;
+        return id !== i;
       });
       return $("#card-" + i).removeClass('card-replace');
     }
@@ -353,17 +375,20 @@
   };
 
   this.drop = function(event) {
-    var source, sourceId, target, targetId;
+    var i, source, sourceId, sourceSRC, target, targetId, targetSRC;
     event.preventDefault();
     sourceId = event.dataTransfer.getData("Text");
     targetId = event.target.id;
     source = sourceId.split('-');
     target = targetId.split('-');
     if (source[0] === 'image' && target[0] === 'image') {
-      source = $('#' + sourceId).attr('src');
-      target = $('#' + targetId).attr('src');
-      $('#' + sourceId).attr('src', target);
-      return $('#' + targetId).attr('src', source);
+      sourceSRC = $('#' + sourceId).attr('src');
+      targetSRC = $('#' + targetId).attr('src');
+      $('#' + sourceId).attr('src', targetSRC);
+      $('#' + targetId).attr('src', sourceSRC);
+      i = _this.game.cards[target[1]];
+      _this.game.cards[target[1]] = _this.game.cards[source[1]];
+      return _this.game.cards[source[1]] = i;
     }
   };
 
