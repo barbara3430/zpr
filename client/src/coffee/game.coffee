@@ -6,10 +6,10 @@
 @callback.startGame = (data) =>
 	@loadContent "game.html"
 	@game.accountVal = data.player.account
-	@game.bidVal = 0
+	@game.bidVal = data.player.bid
 	@game.renderPlayer data.player
 	@game.renderState data.others
-	game.setCards data.player.cards
+	@game.setCards data.player.cards
 
 @callback.refreshState = (data) =>
 	@game.refreshState data

@@ -14,7 +14,7 @@
 loginSuccess = (data) ->
 	@username = data.response
 	loadContent "/lobby.html"
-	refreshNames()
+	@callback.refreshNames()
 
 $ =>
 	@username = null
@@ -27,5 +27,3 @@ $ =>
 		notify "<h1>Welcome</h1><div>Please sign in</div>", 3000
 
 	$('#form-signin').submit logIn
-
-
