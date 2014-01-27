@@ -45,10 +45,10 @@
   this.callback.startGame = function(data) {
     _this.loadContent("game.html");
     _this.game.accountVal = data.player.account;
-    _this.game.bidVal = 0;
+    _this.game.bidVal = data.player.bid;
     _this.game.renderPlayer(data.player);
     _this.game.renderState(data.others);
-    return game.setCards(data.player.cards);
+    return _this.game.setCards(data.player.cards);
   };
 
   this.callback.refreshState = function(data) {
@@ -282,14 +282,14 @@
         "login": login
       }
     ];
-    load('login', parameters, loginSuccess);
+    load('addPlayer', parameters, loginSuccess);
     return false;
   };
 
   loginSuccess = function(data) {
     this.username = data.response;
     loadContent("/lobby.html");
-    return refreshNames();
+    return this.callback.refreshNames();
   };
 
   $(function() {

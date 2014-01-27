@@ -8,7 +8,7 @@
 		"login": login
 	]
 
-	load 'login', parameters, loginSuccess
+	load 'addPlayer', parameters, loginSuccess
 	return false
 
 loginSuccess = (data) ->
