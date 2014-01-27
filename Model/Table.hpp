@@ -17,6 +17,7 @@ public:
      /**
       * struktura opisujaca stan gry
       */
+
      struct GameData {
 	   //kto ostatni przebijal
        //unsigned last_raise;
@@ -33,6 +34,32 @@ public:
        bool in_game;
 	   //ile wynosi all-in w rundzie, potrzebne przy wyliczaniu nagrody
 	   unsigned all_in_bet;
+
+	unsigned turnMinBet() {
+		return turn_min_bet;
+	}
+
+	unsigned getState() {
+		return state;
+	}
+
+	unsigned getStartPlayer() {
+		return start_player;
+	}
+
+	unsigned getPlayerTurn() {
+		return player_turn;
+	}
+
+	bool getInGame() {
+		return in_game;
+	}
+
+	unsigned getAllInBet() {
+		return all_in_bet;
+	}
+
+	
      };
 
 	/**
@@ -188,6 +215,24 @@ BOOST_PYTHON_MODULE(Model)
 	def("stopTable", stopTable);
 	def("getGameData", getGameData);
 };
+
+
+
+BOOST_PYTHON_MODULE(GameData)
+{
+    class_<GameData>("GameData")
+	.def("turnMinBet", &GameData::turnMinBet)
+
+	.def("getState", &GameData::getState)
+
+	.def("getStartPlayer", &GameData::getStartPlayer)
+
+	.def("getPlayerTurn", &GameData::getPlayerTurn)
+
+	.def("getInGame", &GameData::getPlayerTurn)
+	.def("getAllInBet", &GameData::getAllInBet)
+    ;
+}
 
 #endif
 
