@@ -34,7 +34,7 @@ def app(environ, start_response):
     except (ValueError):
         request_body_size = 0
     request_body = environ['wsgi.input'].read(request_body_size)
-    p = json.loads(re)
+    p = json.loads(request_body)
     print p
     if type(p) == list:
       p = p[0]
