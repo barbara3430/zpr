@@ -1,98 +1,95 @@
 #ifndef Table_hpp
 #define Table_hpp
 
-#include "Dictionary.hpp"
 #include "Player.hpp"
 
 #include <vector>
 #include <string>
-//#include <queue>
 #include <climits>
 #include <ctime>
 #include <boost/python.hpp>
 
 using namespace boost::python;
 
-/*#include <boost/thread/condition_variable.hpp>
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/shared_mutex.hpp>
-#include <boost/thread/thread.hpp>
-#include <boost/utility.hpp>*/
-
 class Table {
 public:
 
-      /**
-       * struktura opisuj�ca stan gry
-       */
-       struct GameData {
-	    //kto ostatni przebijal
-           //unsigned last_raise;
+     /**
+      * struktura opisujaca stan gry
+      */
+
+     struct GameData {
+	   //kto ostatni przebijal
+       //unsigned last_raise;
            
-	    //minimalna stawka na runde
-           unsigned turn_min_bet;
-	    //stan gry
-           unsigned state;
+	   //minimalna stawka na runde
+       unsigned turn_min_bet;
+	   //stan gry, START = 1; I_BIDDING = 2; CHANGE = 3; II_BIDDING = 4; END = 5;
+       unsigned state;
 	   //ktory gracz zaczyna, numer jedo siedzenia seat
 	   unsigned start_player;
 	   //ktorego gracza kolej, numer jedo siedzenia seat
 	   unsigned player_turn;
 	   //czy trwa rozgrywka
-           bool in_game;
-           std::list<unsigned> cards; // HAND_SIZE
-        };
+       bool in_game;
+	   //ile wynosi all-in w rundzie, potrzebne przy wyliczaniu nagrody
+	   unsigned all_in_bet;
+
+	unsigned turnMinBet() {
+		return turn_min_bet;
+	}
+
+	unsigned getState() {
+		return state;
+	}
+
+	unsigned getStartPlayer() {
+		return start_player;
+	}
+
+	unsigned getPlayerTurn() {
+		return player_turn;
+	}
+
+	bool getInGame() {
+		return in_game;
+	}
+
+	unsigned getAllInBet() {
+		return all_in_bet;
+	}
+
+	
+     };
 
 	/**
-         * zwraca GameData stolu
-         */
-        GameData getGameData();
-        /**
-         * wylacza stol
-         */
-        void stopTable();
-        /**
-         * konstruktor ustawiajacy minimalna stawke na ANTE
-         */
-        Table();
-        /**
-         * destruktor
-         */
-        ~Table();
-private:
-        /*boost::thread main_loop;
-        boost::mutex queue_mutex;
-        boost::shared_mutex data_mutex;
-        boost::condition_variable queue_empty;
-
-        std::queue< boost::shared_ptr<TableMessage> > task_queue;*/
-        std::vector<Player> players; //w tej wersji moze byc tylko dwoch graczy
-
-	GameData game_data;
-        std::vector<unsigned> deck; // talia
-        unsigned cards_left; //ile kart zostalo w talii
-        std::vector<unsigned> winners;
-
-        //volatile bool running;
-public:
-    /*
-     *
-      * pobranie kolejnej karty z talii
-         */
-        unsigned pickCard();
-        /**
-         * potasowanie talii
-         */
-        void initDeck();
-	 /**
-	  * ustawienie parametrow nowej gry
-	  */
-	void newGame();
-	 /**
-	  * aktywacja gracza na konkretnym siedzeniu
-	  */
-	void activate_player(unsigned seat);
+      * zwraca GameData stolu
+      */
+    GameData getGameData() const;
 	/**
-	  * proba przebicia przez gracza, arg: nr siedzenia (0 lub 1), kwota
+      * zwraca wektor graczy
+      */
+    const std::vector<Player>& getPlayers() const;
+    /**
+      * wylacza stol
+      */
+    void stopTable();
+    /**
+      * konstruktor ustawiajacy minimalna stawke na ANTE
+      */
+    Table();
+    /**
+      * destruktor
+      */
+    ~Table();
+  	/**
+	 * ustawienie parametrow nowej gry;
+	 * zwraca false jesli nie ma dwoch graczy
+	 */
+	bool newGame();
+	/**
+	  * proba przebicia przez gracza, arg: nazwa gracza, kwota
+	  * kwota musi być wieksza niz game_data.turn_min_bet
 	 */
 	bool playerRaise(unsigned seat, unsigned raise);
 	/**
@@ -108,15 +105,8 @@ public:
 	  */
 	bool playerAllIn(unsigned seat);
 	/**
-	  * zaznacza, ze dany gracz wykonal akcje
-	  */
-	void resetActions(unsigned seat);
-	/**
-	  * sprawdzenie i ew. operacje przy zmianie stanu gry
-	  */
-	void checkNextState();
-	/**
-	  * zakonczenie gry
+	  * zakonczenie gry, rozdanie wygranej i ew. wyrzucenie bankrutów,
+	  * wyrzuca się tego, ktory nie ma środkow na nastepna gre (musi miec ANTE+1)
 	  */
 	void endGame();
 	/**
@@ -124,10 +114,9 @@ public:
 	  */
 	void getWinners();
 	/**
-	  * proba dolaczenia do stolu gracza
+	  * proba dolaczenia do stolu gracza o nazwie name
 	 */
-    //bool addPlayer();
-    bool addPlayer(std::string n);
+	bool addPlayer(std::string name);
 	/**
 	  * proba dokonania wymiany kart, 
 	  * seat: nr siedzenia (0 lub 1), 
@@ -135,33 +124,46 @@ public:
 	  * zwraca false, jesli wymiana wiecej niz 5 lub podano zly numer siedzenia
 	 */
 	bool playerChange(unsigned seat, std::vector<unsigned> cards);
+	
+private:
 
+  	GameData game_data;
+        std::vector<Player> players; //w tej wersji moze byc tylko dwoch graczy
+        std::vector<unsigned> deck; // talia
+        unsigned cards_left; //ile kart zostalo w talii
+        std::vector<unsigned> winners;
 
-    public:
+	/**
+      * pobranie kolejnej karty z talii
+      */
+    unsigned pickCard();
+    /**
+      * potasowanie talii, gdy nowa gra
+      */
+    void initDeck();
+	/**
+	  * aktywacja gracza na danym siedzeniu
+	  */
+	void activate_player(unsigned seat);
+	/**
+	  * zaznacza, ze dany gracz wykonal akcje
+	  */
+	void resetActions(unsigned seat);
+	/**
+	  * sprawdzenie i ew. operacje przy zmianie stanu gry
+	  */
+	void checkNextState();
+
+public:
 
     static Table& getInstance() {
         static Table instance;
         return instance;
     }
-
-
 };
-
 
 void newGame() {
     Table::getInstance().newGame();
-}
-
-void activatePlayer(unsigned seat) {
-    Table::getInstance().activate_player(seat);
-}
-
-unsigned pickCard() {
-    return Table::getInstance().pickCard();
-}
-
-void initDeck() {
-    Table::getInstance().initDeck();
 }
 
 bool playerRaise(unsigned seat, unsigned raise) {
@@ -180,18 +182,6 @@ bool playerAllIn(unsigned seat) {
     return Table::getInstance().playerAllIn(seat);
 }
 
-void resetActions(unsigned seat) {
-    Table::getInstance().resetActions(seat);
-}
-
-void checkNextState() {
-    Table::getInstance().checkNextState();
-}
-
-void endGame() {
-    Table::getInstance().endGame();
-}
-
 void getWinners() {
     Table::getInstance().getWinners();
 }
@@ -204,22 +194,45 @@ bool playerChange(unsigned seat, std::vector<unsigned> cards) {
     return Table::getInstance().playerChange(seat, cards);
 }
 
+void stopTable() {
+    return Table::getInstance().stopTable();
+}
+
+Table::GameData  getGameData() {
+    return Table::getInstance().getGameData();
+}
+
 BOOST_PYTHON_MODULE(Model)
 {
     def("newGame", newGame);
-    def("activatePlayer", activatePlayer);
-    def("initDeck", initDeck);
-    def("pickCard", pickCard);
     def("playerRaise", playerRaise);
     def("playerCheck", playerCheck);
     def("playerFold", playerFold);
     def("playerAllIn", playerAllIn);
-    def("resetActions", resetActions);
-    def("checkNextState", checkNextState);
-    def("endGame", endGame);
     def("getWinners", getWinners);
     def("addPlayer", addPlayer);
     def("playerChange", playerChange);
+	def("stopTable", stopTable);
+	def("getGameData", getGameData);
 };
+
+
+
+BOOST_PYTHON_MODULE(GameData)
+{
+    class_<Table::GameData>("GameData")
+	.def("turnMinBet", &Table::GameData::turnMinBet)
+
+	.def("getState", &Table::GameData::getState)
+
+	.def("getStartPlayer", &Table::GameData::getStartPlayer)
+
+	.def("getPlayerTurn", &Table::GameData::getPlayerTurn)
+
+	.def("getInGame", &Table::GameData::getPlayerTurn)
+	.def("getAllInBet", &Table::GameData::getAllInBet)
+    ;
+}
+
 #endif
 

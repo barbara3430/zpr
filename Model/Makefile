@@ -10,7 +10,7 @@ BOOST_LIB = /usr/lib
  
 # compile mesh classes
 TARGET = Model
-OBJ_FILES =  Card.o Hand.o Player.o Table.o
+OBJ_FILES = Card.o Hand.o Player.o Table.o
  
 $(TARGET).so: $(OBJ_FILES)
 	g++ -shared -Wl,--export-dynamic $(OBJ_FILES) -L$(BOOST_LIB) -lboost_python -L/usr/lib/python$(PYTHON_VERSION)/config -lpython$(PYTHON_VERSION) -o $(TARGET).so

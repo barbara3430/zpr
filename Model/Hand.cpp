@@ -1,6 +1,7 @@
 #include "Hand.hpp"
 
 #include <algorithm>
+#include <iostream>
 
 Hand::Hand() : type(0)
 {}
@@ -13,6 +14,16 @@ void Hand::set(const std::vector<unsigned> c)
   }
   checkHand();
 }
+
+void Hand::printHand() const
+{
+  for(unsigned i=0; i<cards.size(); ++i){
+        std::cout<<cards[i].getCard()<<" ";
+  }
+   std::cout<<"\n";
+    
+} 
+
 std::vector<unsigned> Hand::getCards() const
 {
   std::vector<unsigned> v;
@@ -22,6 +33,7 @@ std::vector<unsigned> Hand::getCards() const
   }
   return v;
 }
+
 bool Hand::operator < (const Hand& h) const
 {
   // jesli brak znaczacych ukladow, porownaj najwyzsze karty rak

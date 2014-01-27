@@ -10,30 +10,36 @@
 
 Table::Table()
 {
-        game_data.in_game = false;
-	//game_data.last_raise = 0;
+    game_data.in_game = false;
 	game_data.turn_min_bet = ANTE;
-        //main_loop = boost::thread(boost::bind(&Table::prv_mainLoop, this));
+	game_data.start_player = 0;
+	game_data.player_turn = 0;
+	game_data.state = 1;
+	game_data.all_in_bet = 0;
 }
 Table::~Table()
 {
         stopTable();
-        //main_loop.join();
 }
 
 void Table::stopTable()
 {
-        //if(!running) return;
-        //running = false;
-        game_data.in_game = false;
+    game_data.in_game = false;
 	players.clear();
-        //main_loop.interrupt();
+	game_data.turn_min_bet = 0;
+	game_data.start_player = 0;
+	game_data.player_turn = 0;
+	game_data.state = 1;
 }
 
-Table::GameData Table::getGameData()
+Table::GameData Table::getGameData() const
 {
-        //boost::shared_lock<boost::shared_mutex> lock(data_mutex);
         return game_data;
+}
+
+const std::vector<Player>& Table::getPlayers() const
+{
+        return players;
 }
 
 unsigned Table::pickCard()
@@ -45,10 +51,10 @@ unsigned Table::pickCard()
 	//losuj indeks karty do zwrocenia
 	unsigned card = static_cast<unsigned>(GetRand()) % cards_left;
 	//pobierz karte z wektora
-        unsigned ret = deck[card];
+    unsigned ret = deck[card];
 	//przenies ostatnia karte na miejsce zwracanej
-        deck[card] = deck[--cards_left];
-        return ret;
+    deck[card] = deck[--cards_left];
+    return ret;
 }
 
 void Table::initDeck()
@@ -60,40 +66,46 @@ void Table::initDeck()
         }
 }
 
-void Table::newGame()
+bool Table::newGame()
 {
-    std::cout << "1" << std::flush;
+	if(players.size() != MAX_SEATS) //za mało graczy
+	  return false;
+	game_data.state = START;
 	game_data.in_game = true;
 	game_data.turn_min_bet = ANTE;
-	//game_data.last_raise = 0;
+	game_data.all_in_bet = 0;
 	game_data.start_player = abs(game_data.start_player-1); //teraz zaczyna inny gracz
 	game_data.player_turn = game_data.start_player;
 	//wyczysc tabele wygranych
 	winners.clear();
-std::cout << "2" << std::flush;
+	//zaden z graczy jeszcze nie wykonal ruchu
+	resetActions(2);
+
 	initDeck();
+
+    //std::cout<<"* New Game, STAN: "<<game_data.state<<std::endl;
 
 	for(std::vector<Player>::iterator it = players.begin(); it != players.end(); ++it) {
 		it->is_active = false;
 		it->all_in = false;
 		it->bet_this_turn = 0;
+		it->cash_in_game = 0;
+		it->is_playing = true;
 	}
 std::cout << "3" << std::flush;
 	activate_player(game_data.player_turn);
-std::cout << "4" << std::flush;
-	//pobierz ante
-	for(unsigned i=0; i<MAX_SEATS; ++i){
-    std::cout << "5" << std::flush;
-        if(players[i].cash_available >= ANTE) {
-    std::cout << "6" << std::flush;
-		  playerRaise(players[i].seat, ANTE);
-        }
-		else
-		  playerAllIn(i);	    
-	}
-std::cout << "5" << std::flush;
-	game_data.state = START; //poczatek gry - po ante
 
+	//pobierz ante - musi byc zachowana kolejnosc
+	unsigned ind;
+	for(unsigned i=0; i<MAX_SEATS; ++i){
+	    if(players[i].seat == game_data.player_turn) {
+	       ind = i;
+	       break;
+	    }	
+	}
+	playerCheck(players[ind].seat);
+	playerCheck(players[abs(ind-1)].seat);   
+	
 	//rozdaj nowe karty
 	std::vector<unsigned> v;
 	for(std::vector<Player>::iterator it = players.begin(); it != players.end(); ++it) {
@@ -105,6 +117,8 @@ std::cout << "5" << std::flush;
 		  it->hand.set(v);
 		}
 	}
+
+	return true;
 }
 
 void Table::activate_player(unsigned s)
@@ -130,10 +144,12 @@ bool Table::playerRaise(unsigned s,unsigned raise) //przebicie
 	if(ind == 2){
 	  return false;
 	}
+
+    //std::cout<<players[ind].name <<" raise" << " "<< raise<<std::endl;
+	
 	if(raise > game_data.turn_min_bet && players[ind].bet_this_turn + players[ind].cash_available > raise) {
 	    game_data.turn_min_bet = raise;
 	    players[ind].bet(raise - players[ind].bet_this_turn, players[ind].bet_this_turn);
-	    //game_data.last_raise = players[ind].seat;
 	    //zaznacz, że wykonal ruch, drugiemu ustaw na false
 	    resetActions(ind);
 	}
@@ -159,6 +175,9 @@ bool Table::playerCheck(unsigned s) //sprawdzenie
 	if(ind == 2){
 	  return false;
 	}
+
+    //std::cout<<players[ind].name <<" check" <<std::endl;
+	
 	unsigned bet_now = 0;
 	//jesli starcza mu na sprawdzenie
 	if(players[ind].cash_available + players[ind].bet_this_turn >= game_data.turn_min_bet) {
@@ -187,13 +206,12 @@ bool Table::playerFold(unsigned s)
 	if(ind == 2){
 	  return false;
 	}
+
+   //std::cout<<players[ind].name <<" fold" <<std::endl;
+	
 	game_data.player_turn = abs(game_data.player_turn-1);
 	activate_player(game_data.player_turn);
 	players[ind].is_playing = false;
-	//jesli pasujacy, jako ostatni przebijal, ustaw drugiego jako ostatnio przebijajacego
-	/*if(players[ind].seat == game_data.last_raise) {
-		game_data.last_raise = abs(game_data.last_raise -1);
-	}*/
 	checkNextState();
 	return true;
 }
@@ -210,12 +228,18 @@ bool Table::playerAllIn(unsigned s)
 	if(ind == 2){
 	  return false;
 	}
+
+    //std::cout<<players[ind].name <<" all_in" <<std::endl;
+	
 	players[ind].all_in = true;
 	//jesli gracz wszystko stawia, ale wcale nie musi
 	if(players[ind].cash_available + players[ind].bet_this_turn > game_data.turn_min_bet) {
 		//game_data.last_raise = abs(game_data.player_turn-1);
 		resetActions(ind);
 	}
+	//zapamiętaj za ile zrobił all-in
+	game_data.all_in_bet = players[ind].cash_available;
+	
 	players[ind].bet(players[ind].cash_available, game_data.turn_min_bet);
 	game_data.player_turn = abs(game_data.player_turn-1);
 	activate_player(game_data.player_turn);
@@ -231,65 +255,50 @@ void Table::resetActions(unsigned new_act) {
 
 void Table::checkNextState()
 {
-	//nic nie zmieniaj, jesli ktorys z graczy się nie ruszył (może się nie ruszać tylko, jeśli wcześniej wszedl za wszystko
+	//nie zmieniaj stanu, jesli ktorys z graczy:
+	//gra i nie wszedł za wszystko i nie wykonał akcji
 	for(std::vector<Player>::iterator it = players.begin(); it != players.end(); ++it) {
 		if(it->is_playing && !it->all_in && !it->took_action) {
+			
+			//std::cout<<"NIE"<<std::endl;
+			
 			return;
 		}
 	}
-	//reset minimalnej stawki zakladu
-	game_data.turn_min_bet = 0;
-	//reset zakladu kazdego z graczy
-	for(std::vector<Player>::iterator it = players.begin(); it != players.end(); ++it) {
-		it->bet_this_turn = 0;
-	}
 	
-	/*
-	//aktywuj gracza, ktory ostatni przebijal
-	activate_player(game_data.last_raise);
-	//ruch gracza, który ostatnio przebijal
-	player_turn = game_data.last_raise;
-	resetActions(game_data.last_raise);*/
-	
-	//resetuj akcje graczy - czy wykonali ruch, obaj nie wykonali ruchu
+	//resetuj akcje graczy - czy wykonali ruch, obaj nie wykonali ruchu w nowej rundzie
 	resetActions(2);
 	//przejdz do nastepnego stanu
-	game_data.state++;
+    game_data.state++;
+	
+	//std::cout<<"NEW STATE: "<<game_data.state <<std::endl;
+	
 	if(game_data.state == END) {
 	    endGame();
 	}
 
 	//ilu graczy dalej gra
 	unsigned players_betting = 0;
-	  for(std::vector<Player>::iterator it = players.begin(); it != players.end(); ++it) {
+	for(std::vector<Player>::iterator it = players.begin(); it != players.end(); ++it) {
 		players_betting += (it->is_playing && !it->all_in);
-	  }
-	  //jeśli został tylko jeden gracz lub zaden, to koniec
-	  if(players_betting <= 1) {
-		game_data.state++;
-		if(game_data.state == END) {
-		    endGame();
-		}
-	  }
+	}
+	//jeśli został tylko jeden gracz lub zaden, to koniec
+	if(players_betting <= 1) {
+		endGame();
+	}
 }
 
 void Table::endGame()
 {
-	
-	std::vector<unsigned> leavers; //wektor z numerami przegranych graczy
-
-	//std::cout<< "* Ending game" << ", winners:\n";
-
-	//dobyte nagrody
+	//std::cout<< "* END GAME" << "\n";
+	game_data.state = END;
+	//zdobyte nagrody
 	unsigned prize;
-	//moze byc wektor jedno lub dwu-elementowy
 	
 	getWinners();
 	prize = 0;
 	//pobierz pule ze stolu (wklad kazdego z graczy)
 	for(std::vector<Player>::iterator it = players.begin(); it != players.end(); ++it) {
-
-		//std::cout<< "* "<< it->cash_in_game << " own cash in game\n";
 		prize += it->cash_in_game;
 		it->cash_in_game = 0;
 	}
@@ -304,11 +313,21 @@ void Table::endGame()
 	       break;
 	      }
 	  }
-	  players[ind].cash_available += prize;
-	  //jesli drugi gracz zbankrutowal, usun z gry
+		
+	  //jesli wygrany wszedł za wszystko, a drugi nie spasował(został w grze)
+	  //daj wygranemu pulę przed all-in + jego all-in; drugo dostaje tyle za ile sprawdził
+	  if(players[ind].all_in && players[abs(ind-1)].is_playing)
+	  {
+		  players[ind].cash_available += prize - game_data.all_in_bet;
+		  players[abs(ind-1)].cash_available += game_data.all_in_bet;
+	  }
+	  else
+	  {
+	  	players[ind].cash_available += prize;
+	  }
+	  //jesli drugi gracz zbankrutowal (nie ma kasy na nastepna grę), usun z gry
 	  for(std::vector<Player>::iterator it = players.begin(); it != players.end(); ++it) {
-
-		if(it->cash_available == 0)
+	  if(it->cash_available < ANTE + 1)
 		//std::cout<< "* usuniety z gry:"<< it->name << "\n";
 		players.erase(it);
 	  }
@@ -325,7 +344,6 @@ void Table::endGame()
 	}
 	
 	game_data.in_game = false;
-	winners.clear();
 	
 	//moze sie zaczac nowa gra, ew. mozna dodać gracza, jesli zostal tylko jeden
 }
@@ -343,7 +361,7 @@ void Table::getWinners()
 	if(winners.size() > 1) {
 	  if(players[0].hand == players[1].hand) //remis
 	  {
-	    	winners.clear();
+	    winners.clear();
 		winners.push_back(0);
 		winners.push_back(1);
 	  }
@@ -352,74 +370,85 @@ void Table::getWinners()
 		winners.push_back(1);
 	  }
 	  else{
-	    	winners.clear();
+	    winners.clear();
 		winners.push_back(0);
 	  }
 	}
 }
 
-//bool Table::addPlayer()
-//{
-//    std::cout << "1P" << std::endl << std::flush;
-//    if(players.size() < MAX_SEATS) {
-//      //pobierz nr siedzenia (i tym samym nazwe)
-//        std::cout << "2P" << std::endl << std::flush;
-//      unsigned s = abs(players[0].seat - 1);
-//      std::cout << "3P" << std::endl << std::flush;
-//      players.push_back(Player(s));
-//      return true;
-//    }
-//    return false;
-//}
-
 bool Table::addPlayer(std::string n)
 {
     if(players.size() < MAX_SEATS) {
       unsigned s;
-      if(players.size() == 0)
-    s = 0;
-      else
-    s = abs(players[0].seat - 1);
-      players.push_back(Player(s));
+      if(players.size() == 0){
+		s = 0;
+	  }
+      else {
+		s = abs(players[0].seat - 1);
+	  }
+      players.push_back(Player(s, n));
       return true;
     }
     return false;
 }
 
-
-bool Table::playerChange(unsigned seat, std::vector<unsigned> cards){
-  	unsigned ind = 2;
+bool Table::playerChange(unsigned s, std::vector<unsigned> c){
+	unsigned ind = 2;
 	for(unsigned i=0; i<MAX_SEATS; ++i){
-	    if(players[i].seat == seat) {
+	    if(players[i].seat == s) {
 	       ind = i;
 	       break;
 	    }
 	}
-	if(ind == 2 || cards.size() > 5){
+	if(ind == 2 || c.size() > 5){
 	  return false;
 	}
+
+	std::cout<< players[ind].name<< " change "<<c.size()<< " cards\n";
+	/*for(unsigned i=0; i<c.size(); ++i){
+	 std::cout<<c[i]<<std::endl;
+	  }*/
+	
 	
 	//pobierz aktualna reke
 	std::vector<unsigned> v = players[ind].hand.getCards();
+
+	/*std::cout<<"\n";
+	for(unsigned i=0; i<v.size(); ++i){
+	    std::cout<<v[i]<<std::endl;
+	}
+	std::cout<<"\n";*/
 	
 	//wymien odpowiednie
-	for(unsigned i=0; i<cards.size(); ++i) 
+	for(unsigned i=0; i<c.size(); ++i) 
 	{
-	    for(unsigned i=0; i<v.size(); ++i)
+		 //std::cout<<"i: "<<i<< " "<<c[i]<<std::endl;
+	    for(unsigned j=0; j<v.size(); ++j)
 	    {
-	      if(cards[i]==v[i]) //zamien
+			//std::cout<<"j: "<< j << " " <<v[j]<<std::endl;
+	      if(c[i]==v[j]) //zamien odpowiednia karte
 	      {
-		v[i] = pickCard();
-		deck.push_back(cards[i]);
-		++cards_left;
-		break;
+			  /*std::cout<<"--------------------------------------"<<std::endl;
+			  std::cout<<"zamiana"<< " " <<c[i] << " " << v[j] << " na "<<std::endl;*/
+			v[j] = pickCard();
+			  /*std::cout<<v[j]<<std::endl;
+			  std::cout<<"--------------------------------------"<<std::endl;*/
+			break;
 	      }
 	    }
+	}
+	//zwróć karty do deck'a
+	for(unsigned i=0; i<c.size(); ++i) 
+	{
+		deck.push_back(c[i]);
+		++cards_left;
 	}
 	//ustaw nowa reke
 	players[ind].hand.set(v);
 	players[ind].took_action = true;
 	game_data.player_turn = abs(game_data.player_turn-1);
 	activate_player(game_data.player_turn);
+	checkNextState();
 	return true;
 }
+

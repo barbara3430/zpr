@@ -61,6 +61,8 @@ public:
 	  * zwraca wektor kart (ich numerow (0-51))
 	  */
 	std::vector<unsigned> getCards() const;
+	
+	void printHand() const;
 };
 
 #endif
