@@ -198,7 +198,7 @@ void stopTable() {
     return Table::getInstance().stopTable();
 }
 
-GameData  getGameData() {
+Table::GameData  getGameData() {
     return Table::getInstance().getGameData();
 }
 
@@ -220,17 +220,17 @@ BOOST_PYTHON_MODULE(Model)
 
 BOOST_PYTHON_MODULE(GameData)
 {
-    class_<GameData>("GameData")
-	.def("turnMinBet", &GameData::turnMinBet)
+    class_<Table::GameData>("GameData")
+	.def("turnMinBet", &Table::GameData::turnMinBet)
 
-	.def("getState", &GameData::getState)
+	.def("getState", &Table::GameData::getState)
 
-	.def("getStartPlayer", &GameData::getStartPlayer)
+	.def("getStartPlayer", &Table::GameData::getStartPlayer)
 
-	.def("getPlayerTurn", &GameData::getPlayerTurn)
+	.def("getPlayerTurn", &Table::GameData::getPlayerTurn)
 
-	.def("getInGame", &GameData::getPlayerTurn)
-	.def("getAllInBet", &GameData::getAllInBet)
+	.def("getInGame", &Table::GameData::getPlayerTurn)
+	.def("getAllInBet", &Table::GameData::getAllInBet)
     ;
 }
 
