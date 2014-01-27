@@ -1,5 +1,6 @@
 @logIn = () ->
 	login = $('input[name=login]').val()
+	@username = login
 	
 	if $('input[name="remember-me"]').prop 'checked'
 		setCookie("username", login, 60)
@@ -12,12 +13,12 @@
 	return false
 
 loginSuccess = (data) ->
-	@username = data.response
+    @userID = data
 	@loadContent "/lobby.html"
 	@callback.refreshNames()
 
 $ =>
-	@username = null
+	@userID = null
 
 	login = getCookie "username"
 	if login?

@@ -105,7 +105,7 @@
       _results = [];
       for (_i = 0, _len = data.length; _i < _len; _i++) {
         player = data[_i];
-        _results.push("<li> " + player.name + "($" + player.account + ") current bid: $" + player.bid + " and player " + player.state + " </li>");
+        _results.push("<li> " + player.name + "($" + player.account + ") current bid: $" + player.bid + "</li>");
       }
       return _results;
     })();
@@ -223,7 +223,7 @@
     var parameters;
     parameters = [
       {
-        username: username,
+        username: this.userID,
         method: method,
         parameters: requestParameters
       }
@@ -248,8 +248,11 @@
     var method, parameters;
     if (data.error != null) {
       notify(data.error, 2500, notify.error);
-      return false;
+      if (data.method != null) {
+        _this.load(data.method);
+      }
     }
+    return false;
     method = data.method;
     parameters = data.parameters;
     if (method in _this.callback) {
@@ -288,6 +291,7 @@
   this.logIn = function() {
     var login, parameters;
     login = $('input[name=login]').val();
+    this.username = login;
     if ($('input[name="remember-me"]').prop('checked')) {
       setCookie("username", login, 60);
     }
@@ -301,14 +305,16 @@
   };
 
   loginSuccess = function(data) {
-    this.username = data.response;
-    this.loadContent("/lobby.html");
-    return this.callback.refreshNames();
+    return this.userID = data;
   };
+
+  this.loadContent("/lobby.html");
+
+  this.callback.refreshNames();
 
   $(function() {
     var login;
-    _this.username = null;
+    _this.userID = null;
     login = getCookie("username");
     if (login != null) {
       $('input[name="login"]').val(login);

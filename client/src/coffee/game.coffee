@@ -43,7 +43,7 @@
 
 game.renderState = (data) ->
 	div = for player in data
-		"<li> #{player.name}($#{player.account}) current bid: $#{player.bid} and player #{player.state} </li>"
+		"<li> #{player.name}($#{player.account}) current bid: $#{player.bid}</li>"
 	div.join " "
 	$("#game-state").replaceWith '<ul class="list">' + div + '</ul>'
 
