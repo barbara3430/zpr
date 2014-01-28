@@ -45,10 +45,14 @@
   this.callback.startGame = function(data) {
     _this.loadContent("game.html");
     _this.game.accountVal = data.player.account;
-    _this.game.bidVal = 0;
+    _this.game.bidVal = data.player.bid;
     _this.game.renderPlayer(data.player);
-    _this.game.renderState(data.others);
-    return game.setCards(data.player.cards);
+    _this.game.refreshState(data);
+    return _this.game.setCards(data.player.cards);
+  };
+
+  this.callback.setCards = function(data) {
+    return _this.game.setCards(data);
   };
 
   this.callback.refreshState = function(data) {
@@ -56,7 +60,7 @@
   };
 
   this.callback.renderPlayer = function(data) {
-    return game.renderPlayer(data);
+    return _this.game.renderPlayer(data);
   };
 
   this.callback.finishGame = function(data) {
@@ -64,16 +68,18 @@
   };
 
   this.game.refreshState = function(data) {
-    game.render(data.others);
+    game.renderState(data.others);
     return setTimeout(game.update, 1000);
   };
 
   this.game.finishGame = function(data) {
     if (data.won === true) {
-      return notify("You win!", 3000);
+      notify("You win!", 3000);
     } else {
-      return notify("You loose!", 3000, notify.warning);
+      notify("You loose!", 3000, notify.warning);
     }
+    _this.loadContent('lobby.html');
+    return _this.load('updateNames');
   };
 
   this.game.username = this.username;
@@ -99,7 +105,7 @@
       _results = [];
       for (_i = 0, _len = data.length; _i < _len; _i++) {
         player = data[_i];
-        _results.push("<li> " + player.name + "($" + player.account + ") current bid: $" + player.bid + " and player " + player.state + " </li>");
+        _results.push("<li> " + player.name + "($" + player.account + ") current bid: $" + player.bid + "</li>");
       }
       return _results;
     })();
@@ -119,11 +125,11 @@
         bid: newBid
       }
     ];
-    return load('bid', parameters);
+    return load('playerRaise', parameters);
   };
 
   game.pass = function() {
-    load('pass', null);
+    load('playerFold', null);
     return $('.control').attr('disabled', true);
   };
 
@@ -168,7 +174,7 @@
         ]
       }
     ];
-    return load('replaceCards', parameters);
+    return load('playerChange', parameters);
   };
 
   game.toggleCardReplace = function(i) {
@@ -181,6 +187,14 @@
       });
       return $("#card-" + i).removeClass('card-replace');
     }
+  };
+
+  game.allIn = function() {
+    return load('playerAllIn');
+  };
+
+  game.check = function() {
+    return load('playerCheck');
   };
 
   host = "http://localhost:3000/";
@@ -209,7 +223,7 @@
     var parameters;
     parameters = [
       {
-        username: username,
+        username: this.userID,
         method: method,
         parameters: requestParameters
       }
@@ -234,8 +248,11 @@
     var method, parameters;
     if (data.error != null) {
       notify(data.error, 2500, notify.error);
-      return false;
+      if (data.method != null) {
+        _this.load(data.method);
+      }
     }
+    return false;
     method = data.method;
     parameters = data.parameters;
     if (method in _this.callback) {
@@ -274,6 +291,7 @@
   this.logIn = function() {
     var login, parameters;
     login = $('input[name=login]').val();
+    this.username = login;
     if ($('input[name="remember-me"]').prop('checked')) {
       setCookie("username", login, 60);
     }
@@ -282,19 +300,21 @@
         "login": login
       }
     ];
-    load('login', parameters, loginSuccess);
+    load('addPlayer', parameters, loginSuccess);
     return false;
   };
 
   loginSuccess = function(data) {
-    this.username = data.response;
-    loadContent("/lobby.html");
-    return refreshNames();
+    return this.userID = data;
   };
+
+  this.loadContent("/lobby.html");
+
+  this.callback.refreshNames();
 
   $(function() {
     var login;
-    _this.username = null;
+    _this.userID = null;
     login = getCookie("username");
     if (login != null) {
       $('input[name="login"]').val(login);

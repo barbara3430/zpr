@@ -21,7 +21,7 @@ hostJSON = host + 'test' # TODO fill address.
 # TODO: Actually using the data.
 @load = (method, requestParameters) ->
 	parameters = [
-		username: username
+		username: @userID
 		method: method
 		parameters: requestParameters
 	]
@@ -37,7 +37,9 @@ hostJSON = host + 'test' # TODO fill address.
 
 successJSON = (data) =>
 	if data.error?
-		notify data.error, 2500, notify.error
+        notify data.error, 2500, notify.error
+        if data.method?
+            @load data.method
 		return false
 
 	method = data.method
