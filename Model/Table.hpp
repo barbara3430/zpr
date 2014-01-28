@@ -93,19 +93,19 @@ public:
 	  * proba przebicia przez gracza, arg: nazwa gracza, kwota
 	  * kwota musi być wieksza niz game_data.turn_min_bet
 	 */
-	Json::Value playerRaise(unsigned seat, unsigned raise);
+	std::string playerRaise(unsigned seat, unsigned raise);
 	/**
 	  * proba sprawdzenia przez gracza
 	  */
-	Json::Value playerCheck(unsigned seat);
+	std::string playerCheck(unsigned seat);
 	/**
 	  * proba spasowania przez gracza
 	  */
-	Json::Value playerFold(unsigned seat);
+	std::string playerFold(unsigned seat);
 	/**
 	  * proba wejscia za wszystko przez gracza
 	  */
-	Json::Value playerAllIn(unsigned seat);
+	std::string playerAllIn(unsigned seat);
 	/**
 	  * zakonczenie gry, rozdanie wygranej i ew. wyrzucenie bankrutów,
 	  * wyrzuca się tego, ktory nie ma środkow na nastepna gre (musi miec ANTE+1)
@@ -118,42 +118,42 @@ public:
 	/**
 	  * proba dolaczenia do stolu gracza o nazwie name
 	 */
-	Json::Value addPlayer(std::string name);
+	std::string addPlayer(std::string name);
 	/**
 	  * proba dokonania wymiany kart, 
 	  * seat: nr siedzenia (0 lub 1), 
 	  * cards: vector z numerami kart do wymiany (od 0 do 51), jesli vector bedzie pusty oznacza, ?e nic nie wymieniac
 	  * zwraca false, jesli wymiana wiecej niz 5 lub podano zly numer siedzenia
 	 */
-	Json::Value playerChange(unsigned seat, boost::python::list& cards);
+	std::string playerChange(unsigned seat, boost::python::list& cards);
 	
-	Json::Value updateNames(unsigned s);
+	std::string updateNames(unsigned s);
 		
-	Json::Value updateGame(unsigned s);
+	std::string updateGame(unsigned s);
 	
 	//odpowiedz z bledem
-	Json::Value getJsonError(std::string name, std::string info);
+	std::string getJsonError(std::string name, std::string info);
 	
 	//odpowiedz na addPlayer
-	Json::Value addPlayerJson(unsigned seat);
+	std::string addPlayerJson(unsigned seat);
 	
 	//odpowiedz na updateNames
-	Json::Value refreshNamesJson(unsigned seat);
+	std::string refreshNamesJson(unsigned seat);
 	
 	//odpowiedz na updateGame
-	Json::Value refreshStateJson(unsigned seat, int state);
+	std::string refreshStateJson(unsigned seat, int state);
 	
 	//odpowiedz na updateGame, jesli koniec gry
-	Json::Value finishGameJson(unsigned s);
+	std::string finishGameJson(unsigned s);
 	
 	//odpowiedz na akcje check, fold, raise
-	Json::Value renderPlayerJson(unsigned s);
+	std::string renderPlayerJson(unsigned s);
 	
 	//odpowiedz na akcje change 
-	Json::Value setCardsJson(unsigned s);
+	std::string setCardsJson(unsigned s);
 	
 	//odpowiedz na refreshNames
-	Json::Value startGameJson(unsigned s);
+	std::string startGameJson(unsigned s);
 	
 	
 private:
@@ -205,7 +205,7 @@ bool newGame() {
  * proba przebicia przez gracza, arg: nazwa gracza, kwota
  * kwota musi być wieksza niz game_data.turn_min_bet
  */
-Json::Value playerRaise(unsigned seat, unsigned raise) {
+std::string playerRaise(unsigned seat, unsigned raise) {
     return Table::getInstance().playerRaise(seat, raise);
 }
 
@@ -213,15 +213,15 @@ Json::Value playerRaise(unsigned seat, unsigned raise) {
  * sprawdzenie, kwota jest automatycznie pobierana z konta gracza
  * kwota musi być wieksza niz game_data.turn_min_bet
  */
-Json::Value playerCheck(unsigned seat) {
+std::string playerCheck(unsigned seat) {
     return Table::getInstance().playerCheck(seat);
 }
 
-Json::Value playerFold(unsigned seat) {
+std::string playerFold(unsigned seat) {
     return Table::getInstance().playerFold(seat);
 }
 
-Json::Value playerAllIn(unsigned seat) {
+std::string playerAllIn(unsigned seat) {
     return Table::getInstance().playerAllIn(seat);
 }
 
@@ -229,11 +229,11 @@ void getWinners() {
     Table::getInstance().getWinners();
 }
 
-Json::Value addPlayer(std::string n) {
+std::string addPlayer(std::string n) {
     return Table::getInstance().addPlayer(n);
 }
 
-Json::Value playerChange(unsigned seat, boost::python::list& cards) {
+std::string playerChange(unsigned seat, boost::python::list& cards) {
     return Table::getInstance().playerChange(seat, cards);
 }
 
@@ -245,11 +245,11 @@ Table::GameData  getGameData() {
     return Table::getInstance().getGameData();
 }
 
-Json::Value updateNames(unsigned seat) {
+std::string updateNames(unsigned seat) {
     return Table::getInstance().updateNames(seat);
 }
 
-Json::Value updateGame(unsigned seat) {
+std::string updateGame(unsigned seat) {
     return Table::getInstance().updateNames(seat);
 }
 

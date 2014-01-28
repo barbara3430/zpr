@@ -132,7 +132,7 @@ void Table::activate_player(unsigned s)
 	}
 }
 
-Json::Value Table::playerRaise(unsigned s,unsigned raise) //przebicie
+std::string  Table::playerRaise(unsigned s,unsigned raise) //przebicie
 {
 	unsigned ind = 2;
 	for(unsigned i=0; i<MAX_SEATS; ++i){
@@ -163,7 +163,7 @@ Json::Value Table::playerRaise(unsigned s,unsigned raise) //przebicie
 	return renderPlayerJson(s);
 }
 
-Json::Value Table::playerCheck(unsigned s) //sprawdzenie
+std::string  Table::playerCheck(unsigned s) //sprawdzenie
 {
 	unsigned ind = 2;
 	for(unsigned i=0; i<MAX_SEATS; ++i){
@@ -199,7 +199,7 @@ Json::Value Table::playerCheck(unsigned s) //sprawdzenie
 	return renderPlayerJson(s);
 }
 
-Json::Value Table::playerFold(unsigned s)
+std::string  Table::playerFold(unsigned s)
 {
 	unsigned ind = 2;
 	for(unsigned i=0; i<MAX_SEATS; ++i){
@@ -226,7 +226,7 @@ Json::Value Table::playerFold(unsigned s)
 	return renderPlayerJson(s);
 }
 
-Json::Value Table::playerAllIn(unsigned s)
+std::string  Table::playerAllIn(unsigned s)
 {
 	unsigned ind = 2;
 	for(unsigned i=0; i<MAX_SEATS; ++i){
@@ -391,7 +391,7 @@ void Table::getWinners()
 	}
 }
 
-Json::Value Table::addPlayer(std::string n)
+std::string Table::addPlayer(std::string n)
 {
     if(players.size() < MAX_SEATS) {
       unsigned s;
@@ -407,7 +407,7 @@ Json::Value Table::addPlayer(std::string n)
     return getJsonError("addPlayerError", "There are already two players");
 }
 
-Json::Value Table::playerChange(unsigned s, boost::python::list& ns){
+std::string  Table::playerChange(unsigned s, boost::python::list& ns){
   
   	std::vector<unsigned> c;	
         for (int i = 0; i < len(ns); ++i)
@@ -425,6 +425,12 @@ Json::Value Table::playerChange(unsigned s, boost::python::list& ns){
 	if(ind == 2 || c.size() > 5){
 	  return getJsonError("playerChangeError", "Wrong player seat number or too many cards to change");
 	}
+	
+	if(game_data.player_turn != s) //nie jego tura, brak akcji
+	{
+	  return setCardsJson(s);
+	}
+
 
 	std::cout<< players[ind].name<< " change "<<c.size()<< " cards\n";
 	/*for(unsigned i=0; i<c.size(); ++i){
@@ -474,7 +480,7 @@ Json::Value Table::playerChange(unsigned s, boost::python::list& ns){
 	return setCardsJson(s);
 }
 
-Json::Value Table::updateNames(unsigned s)
+std::string  Table::updateNames(unsigned s)
 {
   	unsigned ind = 2;
 	for(unsigned i=0; i<MAX_SEATS; ++i){
@@ -504,7 +510,7 @@ Json::Value Table::updateNames(unsigned s)
   
 }
 
-Json::Value Table::updateGame(unsigned s)
+std::string  Table::updateGame(unsigned s)
 {
     	unsigned ind = 2;
 	for(unsigned i=0; i<MAX_SEATS; ++i){
@@ -542,23 +548,27 @@ Json::Value Table::updateGame(unsigned s)
 	}
 }
 
-Json::Value Table::getJsonError(std::string name, std::string info)
+std::string Table::getJsonError(std::string name, std::string info)
 {
 	Json::Value value(Json::objectValue);
 	value["name"] = name;
 	value["error"] = info;
-	return value;
+	
+	Json::StyledWriter writer;
+	return writer.write( value );
 }
 
-Json::Value Table::addPlayerJson(unsigned s)
+std::string  Table::addPlayerJson(unsigned s)
 {
 	Json::Value value(Json::objectValue);
 	value["method"] = "loginSuccess";
 	value["parameters"] = s;
-	return value;
+	
+	Json::StyledWriter writer;
+	return writer.write( value );
 }
 
-Json::Value Table::refreshNamesJson(unsigned s)
+std::string Table::refreshNamesJson(unsigned s)
 {
     	unsigned ind = 2;
 	for(unsigned i=0; i<MAX_SEATS; ++i){
@@ -573,10 +583,12 @@ Json::Value Table::refreshNamesJson(unsigned s)
 	Json::Value value(Json::objectValue);
 	value["method"] = "refreshNames";
 	value["parameters"]["name"] = players[ind].name;
-	return value;
+	
+	Json::StyledWriter writer;
+	return writer.write( value );
 }
  //[{"username":nazwa,"method":"startGame":{player: {account: int, bid: int, name: str, cards: [int, int, int, int, int]}, others: [{account: int, bid: int, name: str}]}}]
-Json::Value Table::startGameJson(unsigned s)
+std::string  Table::startGameJson(unsigned s)
 {
   	unsigned ind = 2;
 	for(unsigned i=0; i<MAX_SEATS; ++i){
@@ -608,11 +620,13 @@ Json::Value Table::startGameJson(unsigned s)
 	value["parameters"]["others"]["account"] = players[ind].cash_available;
 	value["parameters"]["others"]["bid"] = players[ind].bet_this_turn;
 	value["parameters"]["others"]["name"] = players[ind].name;
-	return value;
+	
+	Json::StyledWriter writer;
+	return writer.write( value );
 }
 
 // [{"username":nazwa,"method":"refreshState",{player: {account: int, bid: int, name: str, state: int(0-2)}, others: [{account: int, bid: int, name: str}]}}] 
-Json::Value Table::refreshStateJson(unsigned s, int st)
+std::string  Table::refreshStateJson(unsigned s, int st)
 {
     	unsigned ind = 2;
 	for(unsigned i=0; i<MAX_SEATS; ++i){
@@ -638,11 +652,13 @@ Json::Value Table::refreshStateJson(unsigned s, int st)
 	value["parameters"]["others"]["account"] = players[ind].cash_available;
 	value["parameters"]["others"]["bid"] = players[ind].bet_this_turn;
 	value["parameters"]["others"]["name"] = players[ind].name;
-	return value; 
+
+	Json::StyledWriter writer;
+	return writer.write( value );
 }
 
 //[{"username":nazwa,"method":"finishGame", parameters: {'won':boolean}}]
-Json::Value Table::finishGameJson(unsigned s)
+std::string  Table::finishGameJson(unsigned s)
 {
       	unsigned ind = 2;
 	for(unsigned i=0; i<MAX_SEATS; ++i){
@@ -667,11 +683,13 @@ Json::Value Table::finishGameJson(unsigned s)
 	}
 	
 	value["parameters"]["won"] = isWinner;
-	return value;
+	
+	Json::StyledWriter writer;
+	return writer.write( value );
 }
 
 //z parametrami {bid:int, account: int}
-Json::Value Table::renderPlayerJson(unsigned s)
+std::string  Table::renderPlayerJson(unsigned s)
 {
       	unsigned ind = 2;
 	for(unsigned i=0; i<MAX_SEATS; ++i){
@@ -689,10 +707,13 @@ Json::Value Table::renderPlayerJson(unsigned s)
 	value["method"] = "renderPlayer";
 	value["parameters"]["bid"] = players[ind].bet_this_turn;
 	value["parameters"]["account"] = players[ind].cash_available;
+	
+	Json::StyledWriter writer;
+	return writer.write( value );
 }
 
 //method: setCards, parameters {[lista wszystkich kart gracza}]
-Json::Value Table::setCardsJson(unsigned s)
+std::string  Table::setCardsJson(unsigned s)
 {
     	unsigned ind = 2;
 	for(unsigned i=0; i<MAX_SEATS; ++i){
@@ -716,6 +737,9 @@ Json::Value Table::setCardsJson(unsigned s)
 	  array.append(v[i]);
 	}
 	value["parameters"]["cards"] = array;
+	
+	Json::StyledWriter writer;
+	return writer.write( value );
 }
 
 
