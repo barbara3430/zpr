@@ -427,7 +427,7 @@ Json::Value Table::playerChange(unsigned s, boost::python::list& ns){
 	
 	if(game_data.player_turn != s) //nie jego tura, brak akcji
 	{
-	  setCardsJson(s);
+	  return setCardsJson(s);
 	}
 
 
