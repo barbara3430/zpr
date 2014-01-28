@@ -36,6 +36,9 @@ public:
        bool in_game;
 	   //ile wynosi all-in w rundzie, potrzebne przy wyliczaniu nagrody
 	   unsigned all_in_bet;
+	   
+	   int player0;
+	   int player1;
 
 	unsigned turnMinBet() {
 		return turn_min_bet;

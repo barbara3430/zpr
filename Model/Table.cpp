@@ -16,6 +16,8 @@ Table::Table()
 	game_data.player_turn = 0;
 	game_data.state = 1;
 	game_data.all_in_bet = 0;
+	game_data.player0 = 0;
+	game_data.player1 = 0;
 }
 Table::~Table()
 {
@@ -479,7 +481,7 @@ std::string  Table::playerChange(unsigned s, boost::python::list& ns){
 	return setCardsJson(s);
 }
 
-std::string  Table::updateNames(unsigned s)
+std::string Table::updateNames(unsigned s)
 {
   	unsigned ind = 2;
 	for(unsigned i=0; i<MAX_SEATS; ++i){
@@ -489,22 +491,19 @@ std::string  Table::updateNames(unsigned s)
 	    }
 	}
 	if(ind == 2){
-	  return getJsonError("updateGameError", "Wrong seat number");
+	  return getJsonError("updateNamesError", "Wrong seat number");
 	}
-	else if(game_data.in_game) //jak trwa już gra, to nie zaczynaj kolejnej
+	if(players.size != 
+	else if(game_data.in_game || players.size() != 2 ) //jak trwa już gra, to nie zaczynaj kolejnej
 	{
 	  return refreshNamesJson(s);
 	}
 	else
 	{
-	  if(newGame()) //gra może być zaczęta
-	  {
-	    return startGameJson(s);
-	  }
-	  else //za malo graczy
-	  {
-	    return refreshNamesJson( s);
-	  }
+	    if(newGame()) //gra może być zaczęta
+	      startGameJson(unsigned s);
+	    else
+	      return getJsonError("updateNamesError", "else");	      
 	}
   
 }
