@@ -7,3 +7,21 @@ import Model
 Model.addPlayer("player1)
 Model.addPlayer("player2)
 Model.newGame()
+
+Lista metod eksportowanych z modelu:
+
+  Json::Value addPlayer(std::string name);
+  	
+  Json::Value updateNames(unsigned seat);
+		
+  Json::Value updateGame(unsigned seat);
+	
+  Json::Value playerChange(unsigned seat, boost::python::list& cards);
+  
+  Json::Value playerRaise(unsigned seat, unsigned raise);
+
+  Json::Value playerCheck(unsigned seat);
+
+  Json::Value playerFold(unsigned seat);
+	  
+  Json::Value playerAllIn(unsigned seat);
