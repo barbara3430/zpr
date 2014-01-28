@@ -4,7 +4,7 @@
 # resources from other web page. That is forbidden.
 
 host = "http://localhost:3000/"
-hostJSON = host + 'test' # TODO fill address.
+hostJSON = host + 'game.py' # TODO fill address.
 # Fetch page
 # TODO: error handling
 @loadContent = (url, parameters=null) ->

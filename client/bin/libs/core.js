@@ -199,7 +199,7 @@
 
   host = "http://localhost:3000/";
 
-  hostJSON = host + 'test';
+  hostJSON = host + 'game.py';
 
   this.loadContent = function(url, parameters) {
     if (parameters == null) {
@@ -295,22 +295,18 @@
     if ($('input[name="remember-me"]').prop('checked')) {
       setCookie("username", login, 60);
     }
-    parameters = [
-      {
-        "login": login
-      }
-    ];
+    parameters = {
+      "login": login
+    };
     load('addPlayer', parameters, loginSuccess);
     return false;
   };
 
   loginSuccess = function(data) {
-    return this.userID = data;
+    this.userID = data;
+    this.loadContent("/lobby.html");
+    return this.callback.refreshNames();
   };
-
-  this.loadContent("/lobby.html");
-
-  this.callback.refreshNames();
 
   $(function() {
     var login;

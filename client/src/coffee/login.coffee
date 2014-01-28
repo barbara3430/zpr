@@ -5,15 +5,15 @@
 	if $('input[name="remember-me"]').prop 'checked'
 		setCookie("username", login, 60)
 	
-	parameters = [
+	parameters = {
 		"login": login
-	]
+	}
 
 	load 'addPlayer', parameters, loginSuccess
 	return false
 
 loginSuccess = (data) ->
-    @userID = data
+	@userID = data
 	@loadContent "/lobby.html"
 	@callback.refreshNames()
 
