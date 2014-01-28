@@ -413,7 +413,7 @@ std::string  Table::playerChange(unsigned s, boost::python::list& ns){
   	std::vector<unsigned> c;	
         for (int i = 0; i < len(ns); ++i)
 	{
-	    c.push_back(boost::python::extract<double>(ns[i]));
+	    c.push_back(boost::python::extract<unsigned>(ns[i]));
 	}
 	
 	unsigned ind = 2;
@@ -498,19 +498,21 @@ std::string Table::updateNames(unsigned s)
 	  return refreshNamesJson(s);
 	} 
 	else if(game_data.in_game && (game_data.player0==1 && game_data.player1==0 || game_data.player0==0 && game_data.player1==1))
-	  return startGameJson(s);
-	else
 	{
-	  if(newGame())
-	  {
+	  return startGameJson(s);
+	}
+	else if(players.size()==2 && !game_data.in_game)
+	{
+	  newGame();
 	    if(s==0)
 	      game_data.player0 = 1;
 	    else
 	      game_data.player1 =1;
 	    return startGameJson(s);
-	  }
-	  else
-	    return refreshNamesJson(s);	    
+	}
+	else
+	{
+	    return refreshNamesJson(s);
 	}
 }
 
@@ -526,6 +528,8 @@ std::string  Table::updateGame(unsigned s)
 	if(ind == 2){
 	  return getJsonError("updateGameError", "Wrong seat number.");
 	}
+	if(game_data.state == END)
+	  return finishGameJson(s);	  
 	int rs; //jaki stan dla klienta
 	if(game_data.player_turn != s) //gracz nieaktywny
 	{
