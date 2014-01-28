@@ -73,6 +73,10 @@
     return setTimeout(game.update, 1000);
   };
 
+  $(function() {
+    return $('.control').attr('disabled', true);
+  });
+
   this.game.lockUI = function(state) {
     if (state == null) {
       return false;
@@ -86,9 +90,9 @@
         $('#checkbutton').attr('disabled', false);
         $('#allinbutton').attr('disabled', false);
         $('#passbutton').attr('disabled', false);
-        break;
-      case 2:
-        $('#changebutton').attr('disabled', false);
+        $('input[name="bid"]').attr('disabled, false\
+		when 2\
+			$(');
     }
     return true;
   };
@@ -137,12 +141,12 @@
   };
 
   game.bid = function() {
-    var newBid, parameters;
-    newBid = $('input[name=""]').val();
-    parameters = {
-      bid: newBid
+    var newBid, param;
+    newBid = $('input[name="bid"]').val();
+    param = {
+      "bid": parseInt(newBid)
     };
-    return load('playerRaise', parameters);
+    return _this.load('playerRaise', param);
   };
 
   game.pass = function() {

@@ -19,8 +19,7 @@ hostJSON = host + 'game.py' # TODO fill address.
 # JSON request
 # TODO: error handling
 # TODO: Actually using the data.
-@load = (method, requestParameters) ->
-	requestParameters = null unless requestParameters?
+@load = (method, requestParameters=null) ->
 	parameters = {
 		username: @userID
 		method: method

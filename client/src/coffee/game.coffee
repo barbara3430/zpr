@@ -21,6 +21,8 @@
 	game.lockUI data.player.state
 	setTimeout game.update, 1000
 
+$ -> $('.control').attr 'disabled', true
+
 @game.lockUI = (state) ->
 	unless state?
 		return false
@@ -32,6 +34,7 @@
 			$('#checkbutton').attr 'disabled', false
 			$('#allinbutton').attr 'disabled', false
 			$('#passbutton').attr 'disabled', false
+			$('input[name="bid"]').attr 'disabled, false
 		when 2
 			$('#changebutton').attr 'disabled', false
 	return true
@@ -65,12 +68,12 @@ game.renderState = (data) ->
 game.update = () ->
 	load 'updateGame'
 
-game.bid = () ->
-	newBid = $('input[name=""]').val()
-	parameters = {
-		bid: newBid
+game.bid = () =>
+	newBid = $('input[name="bid"]').val()
+	param = {
+		"bid": parseInt(newBid)
 	}
-	load 'playerRaise', parameters
+	@load 'playerRaise', param
 
 game.pass = () ->
 	load 'playerFold', null
