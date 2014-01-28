@@ -41,7 +41,10 @@ def app(environ, start_response):
     username = p["username"]
     methodName = p["method"]
     parameters = p["parameters"]
-    params = [username] + (parameters or {}).values()
+    params = []
+    if (username)
+      params.append(username)
+    params += (parameters or {}).values()
     result = getattr(Model, methodName)(*params)
       
     response_body = json.dumps(result)
