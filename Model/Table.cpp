@@ -503,7 +503,7 @@ std::string Table::updateNames(unsigned s)
 	}
 	if(game_data.player0==1 && game_data.player1==1)
 	{
-	  newGame()
+	  newGame();
 	  return startGameJson(s);
 	  return startGameJson(abs(s-1));
 	}		  
