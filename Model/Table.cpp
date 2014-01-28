@@ -92,7 +92,7 @@ bool Table::newGame()
 		it->cash_in_game = 0;
 		it->is_playing = true;
 	}
-std::cout << "3" << std::flush;
+
 	activate_player(game_data.player_turn);
 
 	//pobierz ante - musi byc zachowana kolejnosc
@@ -123,7 +123,6 @@ std::cout << "3" << std::flush;
 
 void Table::activate_player(unsigned s)
 {
-    std::cout<<"Player activated";
 	for(std::vector<Player>::iterator it = players.begin(); it != players.end(); ++it) {
 	    if(it->seat == s)
 	      it->is_active = true;
@@ -492,9 +491,9 @@ std::string  Table::updateNames(unsigned s)
 	if(ind == 2){
 	  return getJsonError("updateGameError", "Wrong seat number");
 	}
-	else if(game_data.in_game) //jak trwa już gra, to nie zaczynaj kolejnej
+	if(game_data.in_game) //jak trwa już gra, to nie zaczynaj kolejnej
 	{
-	  return refreshNamesJson(s);
+	  return startGameJson(s);
 	}
 	else
 	{

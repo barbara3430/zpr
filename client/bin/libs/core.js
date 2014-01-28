@@ -79,15 +79,18 @@
     }
     switch (state) {
       case 0:
-        return $('.control').attr('disabled', true);
+        $('.control').attr('disabled', true);
+        break;
       case 1:
         $('#bidbutton').attr('disabled', false);
         $('#checkbutton').attr('disabled', false);
         $('#allinbutton').attr('disabled', false);
-        return $('#passbutton').attr('disabled', false);
+        $('#passbutton').attr('disabled', false);
+        break;
       case 2:
-        return $('#changebutton').attr('disabled', false);
+        $('#changebutton').attr('disabled', false);
     }
+    return true;
   };
 
   this.game.finishGame = function(data) {
@@ -136,17 +139,16 @@
   game.bid = function() {
     var newBid, parameters;
     newBid = $('input[name=""]').val();
-    parameters = [
-      {
-        bid: newBid
-      }
-    ];
+    parameters = {
+      bid: newBid
+    };
     return load('playerRaise', parameters);
   };
 
   game.pass = function() {
     load('playerFold', null);
-    return $('.control').attr('disabled', true);
+    $('.control').attr('disabled', true);
+    return $('#passbutton').addClass('btn-success');
   };
 
   game.setCards = function(data) {
@@ -206,11 +208,13 @@
   };
 
   game.allIn = function() {
-    return load('playerAllIn');
+    load('playerAllIn');
+    return $('#allinbutton').addClass('btn-success');
   };
 
   game.check = function() {
-    return load('playerCheck');
+    load('playerCheck');
+    return $('#checkbutton').addClass('btn-success');
   };
 
   host = "http://localhost:3000/";

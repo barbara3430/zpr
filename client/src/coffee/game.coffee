@@ -67,14 +67,15 @@ game.update = () ->
 
 game.bid = () ->
 	newBid = $('input[name=""]').val()
-	parameters = [
+	parameters = {
 		bid: newBid
-	]
+	}
 	load 'playerRaise', parameters
 
 game.pass = () ->
 	load 'playerFold', null
 	$('.control').attr 'disabled', true
+	$('#passbutton').addClass 'btn-success'
 
 game.setCards = (data) ->
 	game.cards = {}
@@ -105,5 +106,9 @@ game.toggleCardReplace = (i) ->
 		game.replaced = game.replaced.filter (id) -> id isnt i
 		$("#card-#{i}").removeClass 'card-replace'
 
-game.allIn = () -> load 'playerAllIn'
-game.check = () -> load 'playerCheck'
+game.allIn = () ->
+	load 'playerAllIn'
+	$('#allinbutton').addClass 'btn-success'
+game.check = () ->
+	load 'playerCheck'
+	$('#checkbutton').addClass 'btn-success'
