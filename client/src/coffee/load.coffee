@@ -20,11 +20,11 @@ hostJSON = host + 'game.py' # TODO fill address.
 # TODO: error handling
 # TODO: Actually using the data.
 @load = (method, requestParameters) ->
-	parameters = [
+	parameters = {
 		username: @userID
 		method: method
 		parameters: requestParameters
-	]
+	}
 		
 	$.ajax
 		type: "POST"
@@ -36,17 +36,18 @@ hostJSON = host + 'game.py' # TODO fill address.
 @callback = [] if not @callback?  # TODO: Handle this with exports
 
 successJSON = (data) =>
+	data = $.parseJSON(data)
 	if data.error?
-        notify data.error, 2500, notify.error
-        if data.method?
-            @load data.method
-		return false
+		@notify data.error, 2500, notify.error
+		if data.method?
+            		@load data.method
+			return false
 
 	method = data.method
 	parameters = data.parameters
 	if method of @callback
 		@callback[method](parameters)
 	else
-		notify "Unknown answer from server.", 2500, notify.error
+		@notify "Unknown answer from server.", 2500, notify.error
 		return false
 

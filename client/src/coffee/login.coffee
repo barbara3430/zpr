@@ -1,4 +1,4 @@
-@logIn = () ->
+@logIn = () =>
 	login = $('input[name=login]').val()
 	@username = login
 	
@@ -8,11 +8,10 @@
 	parameters = {
 		"login": login
 	}
-
-	load 'addPlayer', parameters, loginSuccess
+	load 'addPlayer', parameters
 	return false
 
-loginSuccess = (data) ->
+@callback.loginSuccess = (data) =>
 	@userID = data
 	@loadContent "/lobby.html"
 	@callback.refreshNames()

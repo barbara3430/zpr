@@ -35,13 +35,13 @@ def app(environ, start_response):
         request_body_size = 0
     request_body = environ['wsgi.input'].read(request_body_size)
     p = json.loads(request_body)
-    if type(p) == list:
-      p = p[0]
     username = p["username"]
     methodName = p["method"]
     parameters = p["parameters"]
+    if type(parameters) is list:
+        parameters = parameters[0] if parameters else {}
     params = []
-    if (username):
+    if username is not None:
         params.append(username)
     params += [x for _, x in parameters.items()]
     params = [x if type(x) is not unicode else x.encode('utf-8') for x in params]
