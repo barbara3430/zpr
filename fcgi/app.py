@@ -44,6 +44,7 @@ def app(environ, start_response):
     if (username):
         params.append(username)
     params += [x for _, x in parameters.items()]
+    params = [x if type(x) is not unicode else x.encode('utf-8') for x in params]
     result = getattr(Model, methodName)(*params)
 
     response_body = json.dumps(result)
