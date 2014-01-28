@@ -253,7 +253,7 @@ std::string updateNames(unsigned seat) {
 }
 
 std::string updateGame(unsigned seat) {
-    return Table::getInstance().updateNames(seat);
+    return Table::getInstance().updateGame(seat);
 }
 
 BOOST_PYTHON_MODULE(Model)
