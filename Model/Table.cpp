@@ -424,6 +424,12 @@ Json::Value Table::playerChange(unsigned s, boost::python::list& ns){
 	if(ind == 2 || c.size() > 5){
 	  return getJsonError("playerChangeError", "Wrong player seat number or too many cards to change");
 	}
+	
+	if(game_data.player_turn != s) //nie jego tura, brak akcji
+	{
+	  return setCardsJson(s);
+	}
+
 
 	std::cout<< players[ind].name<< " change "<<c.size()<< " cards\n";
 	/*for(unsigned i=0; i<c.size(); ++i){
