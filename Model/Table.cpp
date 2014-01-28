@@ -493,7 +493,7 @@ std::string  Table::updateNames(unsigned s)
 	}
 	if(game_data.in_game) //jak trwa już gra, to nie zaczynaj kolejnej
 	{
-	  return startGameJson(s);
+	  return refreshNamesJson(s);
 	}
 	else
 	{
@@ -640,7 +640,7 @@ std::string  Table::refreshStateJson(unsigned s, int st)
 	
 	Json::Value value(Json::objectValue);
 	value["username"] = players[ind].name;
-	value["method"] = "renderState";
+	value["method"] = "refreshState";
 	
 	value["parameters"]["player"]["account"] = players[ind].cash_available;
 	value["parameters"]["player"]["bid"] = players[ind].bet_this_turn;
