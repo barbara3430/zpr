@@ -14,6 +14,12 @@
 using namespace boost::python;
 
 class Table {
+private:
+    Table();
+    Table(const Table&);
+    Table& operator=(const Table&);
+    ~Table();
+
 public:
 
      /**
@@ -82,12 +88,9 @@ public:
     /**
       * konstruktor ustawiajacy minimalna stawke na ANTE
       */
-    Table();
-    /**
-      * destruktor
-      */
-    ~Table();
-  	/**
+      
+private:
+
 	 * ustawienie parametrow nowej gry;
 	 * zwraca false jesli nie ma dwoch graczy
 	 */
