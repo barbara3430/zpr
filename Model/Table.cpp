@@ -640,7 +640,7 @@ std::string  Table::refreshStateJson(unsigned s, int st)
 	
 	Json::Value value(Json::objectValue);
 	value["username"] = players[ind].name;
-	value["method"] = "refreshState";
+	value["method"] = "renderState";
 	
 	value["parameters"]["player"]["account"] = players[ind].cash_available;
 	value["parameters"]["player"]["bid"] = players[ind].bet_this_turn;
