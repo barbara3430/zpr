@@ -51,10 +51,10 @@ unsigned Table::pickCard()
 	//losuj indeks karty do zwrocenia
 	unsigned card = static_cast<unsigned>(GetRand()) % cards_left;
 	//pobierz karte z wektora
-    unsigned ret = deck[card];
+	 unsigned ret = deck[card];
 	//przenies ostatnia karte na miejsce zwracanej
-    deck[card] = deck[--cards_left];
-    return ret;
+	deck[card] = deck[--cards_left];
+	return ret;
 }
 
 void Table::initDeck()
@@ -83,7 +83,7 @@ bool Table::newGame()
 
 	initDeck();
 
-    //std::cout<<"* New Game, STAN: "<<game_data.state<<std::endl;
+	//std::cout<<"* New Game, STAN: "<<game_data.state<<std::endl;
 
 	for(std::vector<Player>::iterator it = players.begin(); it != players.end(); ++it) {
 		it->is_active = false;
@@ -131,7 +131,7 @@ void Table::activate_player(unsigned s)
 	}
 }
 
-bool Table::playerRaise(unsigned s,unsigned raise) //przebicie
+Json::Value Table::playerRaise(unsigned s,unsigned raise) //przebicie
 {
 	unsigned ind = 2;
 	for(unsigned i=0; i<MAX_SEATS; ++i){
@@ -141,7 +141,7 @@ bool Table::playerRaise(unsigned s,unsigned raise) //przebicie
 	    }
 	}
 	if(ind == 2){
-	  return false;
+	  return getJsonError("playerRaise", "Wrong player seat number.");
 	}
 
     //std::cout<<players[ind].name <<" raise" << " "<< raise<<std::endl;
@@ -153,16 +153,16 @@ bool Table::playerRaise(unsigned s,unsigned raise) //przebicie
 	    resetActions(ind);
 	}
 	else {
-		return false;
+		return getJsonError("playerRaise", "Too small bid for raise or not enough money on players account.");
 	}
 	//teraz ruch drugiego gracza
 	game_data.player_turn = abs(game_data.player_turn-1);
 	activate_player(game_data.player_turn);
 	checkNextState();
-	return true;
+	return renderPlayerJson(s);
 }
 
-bool Table::playerCheck(unsigned s) //sprawdzenie
+Json::Value Table::playerCheck(unsigned s) //sprawdzenie
 {
 	unsigned ind = 2;
 	for(unsigned i=0; i<MAX_SEATS; ++i){
@@ -172,10 +172,15 @@ bool Table::playerCheck(unsigned s) //sprawdzenie
 	    }
 	}
 	if(ind == 2){
-	  return false;
+	  return getJsonError("playerCheck", "Wrong player seat number.");
+	}
+	
+	if(game_data.player_turn != s) //nie jego tura, brak akcji
+	{
+	  return renderPlayerJson(s);
 	}
 
-    //std::cout<<players[ind].name <<" check" <<std::endl;
+	//std::cout<<players[ind].name <<" check" <<std::endl;
 	
 	unsigned bet_now = 0;
 	//jesli starcza mu na sprawdzenie
@@ -185,15 +190,15 @@ bool Table::playerCheck(unsigned s) //sprawdzenie
 		players[ind].took_action = true;
 	}
 	else {
-		return false;
+		return getJsonError("playerCheck", "Not enough money on account for check.");
 	}
 	game_data.player_turn = abs(game_data.player_turn-1);
 	activate_player(game_data.player_turn);
 	checkNextState();
-	return true;
+	return renderPlayerJson(s);
 }
 
-bool Table::playerFold(unsigned s)
+Json::Value Table::playerFold(unsigned s)
 {
 	unsigned ind = 2;
 	for(unsigned i=0; i<MAX_SEATS; ++i){
@@ -203,7 +208,12 @@ bool Table::playerFold(unsigned s)
 	    }
 	}
 	if(ind == 2){
-	  return false;
+	  return getJsonError("playerFold", "Wrong player seat number.");
+	}
+	
+	if(game_data.player_turn != s) //nie jego tura, brak akcji
+	{
+	  return renderPlayerJson(s);
 	}
 
    //std::cout<<players[ind].name <<" fold" <<std::endl;
@@ -212,10 +222,10 @@ bool Table::playerFold(unsigned s)
 	activate_player(game_data.player_turn);
 	players[ind].is_playing = false;
 	checkNextState();
-	return true;
+	return renderPlayerJson(s);
 }
 
-bool Table::playerAllIn(unsigned s)
+Json::Value Table::playerAllIn(unsigned s)
 {
 	unsigned ind = 2;
 	for(unsigned i=0; i<MAX_SEATS; ++i){
@@ -225,10 +235,15 @@ bool Table::playerAllIn(unsigned s)
 	    }
 	}
 	if(ind == 2){
-	  return false;
+	  return getJsonError("playerAllIn", "Wrong player seat number.");
 	}
 
-    //std::cout<<players[ind].name <<" all_in" <<std::endl;
+	if(game_data.player_turn != s) //nie jego tura, brak akcji
+	{
+	  return renderPlayerJson(s);
+	}
+
+   //std::cout<<players[ind].name <<" all_in" <<std::endl;
 	
 	players[ind].all_in = true;
 	//jesli gracz wszystko stawia, ale wcale nie musi
@@ -243,7 +258,7 @@ bool Table::playerAllIn(unsigned s)
 	game_data.player_turn = abs(game_data.player_turn-1);
 	activate_player(game_data.player_turn);
 	checkNextState();
-	return true;
+	return renderPlayerJson(s);
 }
 
 void Table::resetActions(unsigned new_act) {
@@ -268,7 +283,7 @@ void Table::checkNextState()
 	//resetuj akcje graczy - czy wykonali ruch, obaj nie wykonali ruchu w nowej rundzie
 	resetActions(2);
 	//przejdz do nastepnego stanu
-    game_data.state++;
+	game_data.state++;
 	
 	//std::cout<<"NEW STATE: "<<game_data.state <<std::endl;
 	
@@ -375,23 +390,30 @@ void Table::getWinners()
 	}
 }
 
-bool Table::addPlayer(std::string n)
+Json::Value Table::addPlayer(std::string n)
 {
     if(players.size() < MAX_SEATS) {
       unsigned s;
       if(players.size() == 0){
-		s = 0;
-	  }
+	s = 0;
+      }
       else {
-		s = abs(players[0].seat - 1);
-	  }
+	s = abs(players[0].seat - 1);
+      }
       players.push_back(Player(s, n));
-      return true;
+      return addPlayerJson(s);
     }
-    return false;
+    return getJsonError("addPlayerError", "There are already two players");
 }
 
-bool Table::playerChange(unsigned s, std::vector<unsigned> c){
+Json::Value Table::playerChange(unsigned s, boost::python::list& ns){
+  
+  	std::vector<unsigned> c;	
+        for (int i = 0; i < len(ns); ++i)
+	{
+	    c.push_back(boost::python::extract<double>(ns[i]));
+	}
+	
 	unsigned ind = 2;
 	for(unsigned i=0; i<MAX_SEATS; ++i){
 	    if(players[i].seat == s) {
@@ -400,7 +422,7 @@ bool Table::playerChange(unsigned s, std::vector<unsigned> c){
 	    }
 	}
 	if(ind == 2 || c.size() > 5){
-	  return false;
+	  return getJsonError("playerChangeError", "Wrong player seat number or too many cards to change");
 	}
 
 	std::cout<< players[ind].name<< " change "<<c.size()<< " cards\n";
@@ -448,6 +470,255 @@ bool Table::playerChange(unsigned s, std::vector<unsigned> c){
 	game_data.player_turn = abs(game_data.player_turn-1);
 	activate_player(game_data.player_turn);
 	checkNextState();
-	return true;
+	return setCardsJson(s);
 }
+
+Json::Value Table::updateNames(unsigned s)
+{
+  	unsigned ind = 2;
+	for(unsigned i=0; i<MAX_SEATS; ++i){
+	    if(players[i].seat == s) {
+	       ind = i;
+	       break;
+	    }
+	}
+	if(ind == 2){
+	  return getJsonError("updateGameError", "Wrong seat number");
+	}
+	if(game_data.in_game) //jak trwa już gra, to nie zaczynaj kolejnej
+	{
+	  return startGameJson(s);
+	}
+	else
+	{
+	  if(newGame()) //gra może być zaczęta
+	  {
+	    return startGameJson(s);
+	  }
+	  else //za malo graczy
+	  {
+	    return refreshNamesJson( s);
+	  }
+	}
+  
+}
+
+Json::Value Table::updateGame(unsigned s)
+{
+    	unsigned ind = 2;
+	for(unsigned i=0; i<MAX_SEATS; ++i){
+	    if(players[i].seat == s) {
+	       ind = i;
+	       break;
+	    }
+	}
+	if(ind == 2){
+	  return getJsonError("updateGameError", "Wrong seat number.");
+	}
+	int rs; //jaki stan dla klienta
+	if(game_data.player_turn != s) //gracz nieaktywny
+	{
+	  rs = 0;
+	  return refreshStateJson(s, 0);
+	}
+	else if(game_data.state==I_BIDDING || game_data.state==II_BIDDING) //licytacja
+	{
+	  rs = 1;
+	  return refreshStateJson(s, 1);
+	}
+	else if(game_data.state==CHANGE) //wymiana
+	{
+	  rs = 2;
+	  return refreshStateJson(s, 2);
+	}
+	else if(game_data.state == END) //koniec
+	{
+	  return finishGameJson(s);
+	}
+	else //blad modelu zly stan
+	{
+	  return getJsonError("updateGame", "Wrong state in server.");
+	}
+}
+
+Json::Value Table::getJsonError(std::string name, std::string info)
+{
+	Json::Value value(Json::objectValue);
+	value["name"] = name;
+	value["error"] = info;
+	return value;
+}
+
+Json::Value Table::addPlayerJson(unsigned s)
+{
+	Json::Value value(Json::objectValue);
+	value["method"] = "loginSuccess";
+	value["parameters"] = s;
+	return value;
+}
+
+Json::Value Table::refreshNamesJson(unsigned s)
+{
+    	unsigned ind = 2;
+	for(unsigned i=0; i<MAX_SEATS; ++i){
+	    if(players[i].seat == s) {
+	       ind = i;
+	       break;
+	    }
+	}
+	if(ind == 2){
+	  return getJsonError("refreshNames", "Wrong seat number");
+	}
+	Json::Value value(Json::objectValue);
+	value["method"] = "refreshNames";
+	value["parameters"]["name"] = players[ind].name;
+	return value;
+}
+ //[{"username":nazwa,"method":"startGame":{player: {account: int, bid: int, name: str, cards: [int, int, int, int, int]}, others: [{account: int, bid: int, name: str}]}}]
+Json::Value Table::startGameJson(unsigned s)
+{
+  	unsigned ind = 2;
+	for(unsigned i=0; i<MAX_SEATS; ++i){
+	    if(players[i].seat == s) {
+	       ind = i;
+	       break;
+	    }
+	}
+	if(ind == 2){
+	  return getJsonError("startGame", "Wrong seat number");
+	}
+
+	Json::Value value(Json::objectValue);
+	value["username"] = players[ind].name;
+	value["method"] = "startGame";
+	
+	value["parameters"]["player"]["account"] = players[ind].cash_available;
+	value["parameters"]["player"]["bid"] = players[ind].bet_this_turn;
+	value["parameters"]["player"]["name"] = players[ind].name;
+	Json::Value array; 
+	std::vector<unsigned> v = players[ind].hand.getCards();
+	for (int i=0; i<v.size(); ++i)
+	{
+	  array.append(v[i]);
+	}
+	value["cards"] = array;
+	
+	ind = abs(ind -1);
+	value["parameters"]["others"]["account"] = players[ind].cash_available;
+	value["parameters"]["others"]["bid"] = players[ind].bet_this_turn;
+	value["parameters"]["others"]["name"] = players[ind].name;
+	return value;
+}
+
+// [{"username":nazwa,"method":"refreshState",{player: {account: int, bid: int, name: str, state: int(0-2)}, others: [{account: int, bid: int, name: str}]}}] 
+Json::Value Table::refreshStateJson(unsigned s, int st)
+{
+    	unsigned ind = 2;
+	for(unsigned i=0; i<MAX_SEATS; ++i){
+	    if(players[i].seat == s) {
+	       ind = i;
+	       break;
+	    }
+	}
+	if(ind == 2){
+	  return getJsonError("refreshStateError", "Wrong seat number");
+	}
+	
+	Json::Value value(Json::objectValue);
+	value["username"] = players[ind].name;
+	value["method"] = "refreshState";
+	
+	value["parameters"]["player"]["account"] = players[ind].cash_available;
+	value["parameters"]["player"]["bid"] = players[ind].bet_this_turn;
+	value["parameters"]["player"]["name"] = players[ind].name;
+	value["parameters"]["player"]["state"] = st;
+	
+	ind = abs(ind -1);
+	value["parameters"]["others"]["account"] = players[ind].cash_available;
+	value["parameters"]["others"]["bid"] = players[ind].bet_this_turn;
+	value["parameters"]["others"]["name"] = players[ind].name;
+	return value; 
+}
+
+//[{"username":nazwa,"method":"finishGame", parameters: {'won':boolean}}]
+Json::Value Table::finishGameJson(unsigned s)
+{
+      	unsigned ind = 2;
+	for(unsigned i=0; i<MAX_SEATS; ++i){
+	    if(players[i].seat == s) {
+	       ind = i;
+	       break;
+	    }
+	}
+	if(ind == 2){
+	  return getJsonError("finishGameError", "Wrong seat number");
+	}
+	Json::Value value(Json::objectValue);
+	value["method"] = "finishGame";
+	bool isWinner = false;
+	for(int i=0; i<winners.size(); ++i)
+	{
+	  if(winners[i] == s)
+	  {
+	    isWinner = true;
+	    break;
+	  }
+	}
+	
+	value["parameters"]["won"] = isWinner;
+	return value;
+}
+
+//z parametrami {bid:int, account: int}
+Json::Value Table::renderPlayerJson(unsigned s)
+{
+      	unsigned ind = 2;
+	for(unsigned i=0; i<MAX_SEATS; ++i){
+	    if(players[i].seat == s) {
+	       ind = i;
+	       break;
+	    }
+	}
+	if(ind == 2){
+	  return getJsonError("renderPlayerError", "Wrong seat number");
+	}
+	
+	Json::Value value(Json::objectValue);
+	value["username"] = players[ind].name;
+	value["method"] = "renderPlayer";
+	value["parameters"]["bid"] = players[ind].bet_this_turn;
+	value["parameters"]["account"] = players[ind].cash_available;
+}
+
+//method: setCards, parameters {[lista wszystkich kart gracza}]
+Json::Value Table::setCardsJson(unsigned s)
+{
+    	unsigned ind = 2;
+	for(unsigned i=0; i<MAX_SEATS; ++i){
+	    if(players[i].seat == s) {
+	       ind = i;
+	       break;
+	    }
+	}
+	if(ind == 2){
+	  return getJsonError("setCardsError", "Wrong seat number");
+	}
+	
+	Json::Value value(Json::objectValue);
+	value["username"] = players[ind].name;
+	value["method"] = "setCards";
+	
+	Json::Value array; 
+	std::vector<unsigned> v = players[ind].hand.getCards();
+	for (int i=0; i<v.size(); ++i)
+	{
+	  array.append(v[i]);
+	}
+	value["parameters"]["cards"] = array;
+}
+
+
+
+
+
 
