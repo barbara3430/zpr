@@ -8,6 +8,8 @@
 #include <climits>
 #include <ctime>
 #include <boost/python.hpp>
+#include <Python.h>
+#include "json/json.h"
 
 using namespace boost::python;
 
@@ -91,19 +93,19 @@ public:
 	  * proba przebicia przez gracza, arg: nazwa gracza, kwota
 	  * kwota musi być wieksza niz game_data.turn_min_bet
 	 */
-	bool playerRaise(unsigned seat, unsigned raise);
+	Json::Value playerRaise(unsigned seat, unsigned raise);
 	/**
 	  * proba sprawdzenia przez gracza
 	  */
-	bool playerCheck(unsigned seat);
+	Json::Value playerCheck(unsigned seat);
 	/**
 	  * proba spasowania przez gracza
 	  */
-	bool playerFold(unsigned seat);
+	Json::Value playerFold(unsigned seat);
 	/**
 	  * proba wejscia za wszystko przez gracza
 	  */
-	bool playerAllIn(unsigned seat);
+	Json::Value playerAllIn(unsigned seat);
 	/**
 	  * zakonczenie gry, rozdanie wygranej i ew. wyrzucenie bankrutów,
 	  * wyrzuca się tego, ktory nie ma środkow na nastepna gre (musi miec ANTE+1)
@@ -116,14 +118,43 @@ public:
 	/**
 	  * proba dolaczenia do stolu gracza o nazwie name
 	 */
-	bool addPlayer(std::string name);
+	Json::Value addPlayer(std::string name);
 	/**
 	  * proba dokonania wymiany kart, 
 	  * seat: nr siedzenia (0 lub 1), 
 	  * cards: vector z numerami kart do wymiany (od 0 do 51), jesli vector bedzie pusty oznacza, ?e nic nie wymieniac
 	  * zwraca false, jesli wymiana wiecej niz 5 lub podano zly numer siedzenia
 	 */
-	bool playerChange(unsigned seat, std::vector<unsigned> cards);
+	Json::Value playerChange(unsigned seat, boost::python::list& cards);
+	
+	Json::Value updateNames(unsigned s);
+		
+	Json::Value updateGame(unsigned s);
+	
+	//odpowiedz z bledem
+	Json::Value getJsonError(std::string name, std::string info);
+	
+	//odpowiedz na addPlayer
+	Json::Value addPlayerJson(unsigned seat);
+	
+	//odpowiedz na updateNames
+	Json::Value refreshNamesJson(unsigned seat);
+	
+	//odpowiedz na updateGame
+	Json::Value refreshStateJson(unsigned seat, int state);
+	
+	//odpowiedz na updateGame, jesli koniec gry
+	Json::Value finishGameJson(unsigned s);
+	
+	//odpowiedz na akcje check, fold, raise
+	Json::Value renderPlayerJson(unsigned s);
+	
+	//odpowiedz na akcje change 
+	Json::Value setCardsJson(unsigned s);
+	
+	//odpowiedz na refreshNames
+	Json::Value startGameJson(unsigned s);
+	
 	
 private:
 
@@ -162,23 +193,35 @@ public:
     }
 };
 
-void newGame() {
+/**
+ * rozpoczecie gry; zwraca false, jesli za malo graczy; 
+ * W newGame jest pobierane ANTE, stan jest zmieniany na stan nr 2
+ */
+bool newGame() {
     Table::getInstance().newGame();
 }
 
-bool playerRaise(unsigned seat, unsigned raise) {
+/**
+ * proba przebicia przez gracza, arg: nazwa gracza, kwota
+ * kwota musi być wieksza niz game_data.turn_min_bet
+ */
+Json::Value playerRaise(unsigned seat, unsigned raise) {
     return Table::getInstance().playerRaise(seat, raise);
 }
 
-bool playerCheck(unsigned seat) {
+/**
+ * sprawdzenie, kwota jest automatycznie pobierana z konta gracza
+ * kwota musi być wieksza niz game_data.turn_min_bet
+ */
+Json::Value playerCheck(unsigned seat) {
     return Table::getInstance().playerCheck(seat);
 }
 
-bool playerFold(unsigned seat) {
+Json::Value playerFold(unsigned seat) {
     return Table::getInstance().playerFold(seat);
 }
 
-bool playerAllIn(unsigned seat) {
+Json::Value playerAllIn(unsigned seat) {
     return Table::getInstance().playerAllIn(seat);
 }
 
@@ -186,11 +229,11 @@ void getWinners() {
     Table::getInstance().getWinners();
 }
 
-bool addPlayer(std::string n) {
+Json::Value addPlayer(std::string n) {
     return Table::getInstance().addPlayer(n);
 }
 
-bool playerChange(unsigned seat, std::vector<unsigned> cards) {
+Json::Value playerChange(unsigned seat, boost::python::list& cards) {
     return Table::getInstance().playerChange(seat, cards);
 }
 
@@ -202,6 +245,14 @@ Table::GameData  getGameData() {
     return Table::getInstance().getGameData();
 }
 
+Json::Value updateNames(unsigned seat) {
+    return Table::getInstance().updateNames(seat);
+}
+
+Json::Value updateGame(unsigned seat) {
+    return Table::getInstance().updateNames(seat);
+}
+
 BOOST_PYTHON_MODULE(Model)
 {
     def("newGame", newGame);
@@ -209,14 +260,14 @@ BOOST_PYTHON_MODULE(Model)
     def("playerCheck", playerCheck);
     def("playerFold", playerFold);
     def("playerAllIn", playerAllIn);
-    def("getWinners", getWinners);
     def("addPlayer", addPlayer);
     def("playerChange", playerChange);
-	def("stopTable", stopTable);
-	def("getGameData", getGameData);
+    def("getGameData", getGameData);
+    def("updateNames", updateNames);
+    def("updateGame", updateGame);
+    def("getWinners", getWinners);        
+    def("stopTable", stopTable);          
 };
-
-
 
 BOOST_PYTHON_MODULE(GameData)
 {
