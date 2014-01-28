@@ -18,8 +18,23 @@
 
 @game.refreshState = (data) ->
 	game.renderState data.others
+	game.lockUI data.player.state
 	setTimeout game.update, 1000
 
+@game.lockUI = (state) ->
+	unless state?
+		return false
+	switch state
+		when 0 
+			$('.control').attr 'disabled', true
+		when 1
+			$('#bidbutton').attr 'disabled', false
+			$('#checkbutton').attr 'disabled', false
+			$('#allinbutton').attr 'disabled', false
+			$('#passbutton').attr 'disabled', false
+		when 2
+			$('#changebutton').attr 'disabled', false
+	return true
 
 @game.finishGame = (data) =>
 	if data.won is true  # TODO check

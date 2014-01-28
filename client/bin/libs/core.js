@@ -69,7 +69,25 @@
 
   this.game.refreshState = function(data) {
     game.renderState(data.others);
+    game.lockUI(data.player.state);
     return setTimeout(game.update, 1000);
+  };
+
+  this.game.lockUI = function(state) {
+    if (state == null) {
+      return false;
+    }
+    switch (state) {
+      case 0:
+        return $('.control').attr('disabled', true);
+      case 1:
+        $('#bidbutton').attr('disabled', false);
+        $('#checkbutton').attr('disabled', false);
+        $('#allinbutton').attr('disabled', false);
+        return $('#passbutton').attr('disabled', false);
+      case 2:
+        return $('#changebutton').attr('disabled', false);
+    }
   };
 
   this.game.finishGame = function(data) {
