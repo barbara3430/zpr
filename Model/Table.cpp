@@ -493,7 +493,7 @@ std::string Table::updateNames(unsigned s)
 	if(ind == 2){
 	  return getJsonError("updateNamesError", "Wrong seat number");
 	}		  
-	if(players.size() != 2 ) //jak trwa już gra lub nie ma dwóch graczy, to nie zaczynaj kolejnej
+	if(players.size()!=2) //jak trwa już gra lub nie ma dwóch graczy, to nie zaczynaj kolejnej
 	{
 	  return refreshNamesJson(s);
 	} 
