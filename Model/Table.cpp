@@ -494,7 +494,7 @@ std::string  Table::updateNames(unsigned s)
 	}
 	if(game_data.in_game) //jak trwa już gra, to nie zaczynaj kolejnej
 	{
-	  return startGameJson(s);
+	  return refreshNamesJson(s);
 	}
 	else
 	{
