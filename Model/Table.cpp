@@ -554,7 +554,7 @@ std::string Table::getJsonError(std::string name, std::string info)
 	value["name"] = name;
 	value["error"] = info;
 	
-	Json::StyledWriter writer;
+	Json::FastWriter writer;
 	return writer.write( value );
 }
 
@@ -564,7 +564,7 @@ std::string  Table::addPlayerJson(unsigned s)
 	value["method"] = "loginSuccess";
 	value["parameters"] = s;
 	
-	Json::StyledWriter writer;
+	Json::FastWriter writer;
 	return writer.write( value );
 }
 
@@ -584,7 +584,7 @@ std::string Table::refreshNamesJson(unsigned s)
 	value["method"] = "refreshNames";
 	value["parameters"]["name"] = players[ind].name;
 	
-	Json::StyledWriter writer;
+	Json::FastWriter writer;
 	return writer.write( value );
 }
  //[{"username":nazwa,"method":"startGame":{player: {account: int, bid: int, name: str, cards: [int, int, int, int, int]}, others: [{account: int, bid: int, name: str}]}}]
@@ -621,7 +621,7 @@ std::string  Table::startGameJson(unsigned s)
 	value["parameters"]["others"]["bid"] = players[ind].bet_this_turn;
 	value["parameters"]["others"]["name"] = players[ind].name;
 	
-	Json::StyledWriter writer;
+	Json::FastWriter writer;
 	return writer.write( value );
 }
 
@@ -653,7 +653,7 @@ std::string  Table::refreshStateJson(unsigned s, int st)
 	value["parameters"]["others"]["bid"] = players[ind].bet_this_turn;
 	value["parameters"]["others"]["name"] = players[ind].name;
 
-	Json::StyledWriter writer;
+	Json::FastWriter writer;
 	return writer.write( value );
 }
 
@@ -684,7 +684,7 @@ std::string  Table::finishGameJson(unsigned s)
 	
 	value["parameters"]["won"] = isWinner;
 	
-	Json::StyledWriter writer;
+	Json::FastWriter writer;
 	return writer.write( value );
 }
 
@@ -708,7 +708,7 @@ std::string  Table::renderPlayerJson(unsigned s)
 	value["parameters"]["bid"] = players[ind].bet_this_turn;
 	value["parameters"]["account"] = players[ind].cash_available;
 	
-	Json::StyledWriter writer;
+	Json::FastWriter writer;;
 	return writer.write( value );
 }
 
@@ -738,7 +738,7 @@ std::string  Table::setCardsJson(unsigned s)
 	}
 	value["parameters"]["cards"] = array;
 	
-	Json::StyledWriter writer;
+	Json::FastWriter writer;
 	return writer.write( value );
 }
 
