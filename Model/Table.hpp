@@ -90,7 +90,7 @@ public:
       */
       
 private:
-
+/*
 	 * ustawienie parametrow nowej gry;
 	 * zwraca false jesli nie ma dwoch graczy
 	 */
