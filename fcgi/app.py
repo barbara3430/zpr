@@ -32,8 +32,7 @@ def app(environ, start_response):
     try:
         request_body_size = int(environ.get('CONTENT_LENGTH', 0))
     except (ValueError):
-        start_response('404 Not Found', [("Content-Type", "plain/text")])
-        return ""
+        request_body_size = 0
     request_body = environ['wsgi.input'].read(request_body_size)
     p = json.loads(request_body)
     if type(p) == list:
@@ -41,7 +40,10 @@ def app(environ, start_response):
     username = p["username"]
     methodName = p["method"]
     parameters = p["parameters"]
-    params = [username] + [x for _, x in parameters.items()]
+    params = []
+    if (username):
+        params.append(username)
+    params += [x for _, x in parameters.items()]
     result = getattr(Model, methodName)(*params)
 
     response_body = json.dumps(result)
