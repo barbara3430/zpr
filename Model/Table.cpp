@@ -613,7 +613,7 @@ std::string  Table::startGameJson(unsigned s)
 	{
 	  array.append(v[i]);
 	}
-	value["cards"] = array;
+	value["parameters"]["player"]["cards"] = array;
 	
 	ind = abs(ind -1);
 	value["parameters"]["others"]["account"] = players[ind].cash_available;
