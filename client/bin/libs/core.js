@@ -86,13 +86,11 @@
 
   this.game.renderPlayer = function(data) {
     var div;
-    if (data != null) {
-      if (data.bid != null) {
-        this.bidVal = data.bid;
-      }
-      if (data.account != null) {
-        this.accountVal = data.account;
-      }
+    if (data.bid != null) {
+      this.bidVal = data.bid;
+    }
+    if (data.account != null) {
+      this.accountVal = data.account;
     }
     div = "	<div>" + this.username + ":</div>	<div> Account: " + this.accountVal + "</div>	<div> Bid: " + this.bidVal + "</div>	";
     return $('#player-state').html(div);
@@ -221,6 +219,9 @@
 
   this.load = function(method, requestParameters) {
     var parameters;
+    if (requestParameters == null) {
+      requestParameters = null;
+    }
     parameters = {
       username: this.userID,
       method: method,
@@ -244,7 +245,7 @@
 
   successJSON = function(data) {
     var method, parameters;
-    data = $.parseJSON(data);
+    data = JSON.parse(data);
     if (data.error != null) {
       _this.notify(data.error, 2500, notify.error);
       if (data.method != null) {

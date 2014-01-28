@@ -31,9 +31,9 @@
 
 @game.username = @username
 @game.renderPlayer = (data) ->
-	if data?
-		@bidVal = data.bid if data.bid?
-		@accountVal = data.account if data.account?
+	@bidVal = data.bid if data.bid?
+	@accountVal = data.account if data.account?
+
 	div = "
 	<div>#{@username}:</div>
 	<div> Account: #{@accountVal}</div>

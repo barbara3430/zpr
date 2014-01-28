@@ -20,6 +20,7 @@ hostJSON = host + 'game.py' # TODO fill address.
 # TODO: error handling
 # TODO: Actually using the data.
 @load = (method, requestParameters) ->
+	requestParameters = null unless requestParameters?
 	parameters = {
 		username: @userID
 		method: method
@@ -36,7 +37,7 @@ hostJSON = host + 'game.py' # TODO fill address.
 @callback = [] if not @callback?  # TODO: Handle this with exports
 
 successJSON = (data) =>
-	data = $.parseJSON(data)
+	data = JSON.parse(data)
 	if data.error?
 		@notify data.error, 2500, notify.error
 		if data.method?

@@ -43,7 +43,8 @@ def app(environ, start_response):
     params = []
     if username is not None:
         params.append(username)
-    params += [x for _, x in parameters.items()]
+    if parameters is not None:
+        params += [x for _, x in parameters.items()]
     params = [x if type(x) is not unicode else x.encode('utf-8') for x in params]
     result = getattr(Model, methodName)(*params)
 
