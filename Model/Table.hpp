@@ -89,7 +89,7 @@ public:
       * konstruktor ustawiajacy minimalna stawke na ANTE
       */
       
-private:
+public:
 /*
 	 * ustawienie parametrow nowej gry;
 	 * zwraca false jesli nie ma dwoch graczy
