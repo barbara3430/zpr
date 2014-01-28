@@ -504,8 +504,8 @@ std::string Table::updateNames(unsigned s)
 	if(game_data.player0==1 && game_data.player1==1)
 	{
 	  newGame()
-	  startGameJson(s);
-	  startGameJson(abs(s-1));
+	  return startGameJson(s);
+	  return startGameJson(abs(s-1));
 	}		  
 	if(game_data.in_game || players.size() != 2 ) //jak trwa już gra lub nie ma dwóch graczy, to nie zaczynaj kolejnej
 	{
