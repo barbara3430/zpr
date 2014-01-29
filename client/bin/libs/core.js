@@ -90,18 +90,19 @@
         $('#checkbutton').attr('disabled', false);
         $('#allinbutton').attr('disabled', false);
         $('#passbutton').attr('disabled', false);
-        $('input[name="bid"]').attr('disabled, false\
-		when 2\
-			$(');
+        $('input[name="bid"]').attr('disabled', false);
+        break;
+      case 2:
+        $('#changebutton').attr('disabled', false);
     }
     return true;
   };
 
   this.game.finishGame = function(data) {
     if (data.won === true) {
-      notify("You win!", 3000);
+      notify("You win!", 0);
     } else {
-      notify("You loose!", 3000, notify.warning);
+      notify("You loose!", 0, notify.warning);
     }
     _this.loadContent('lobby.html');
     return _this.load('updateNames');
@@ -121,7 +122,7 @@
     return $('#player-state').html(div);
   };
 
-  game.renderState = function(data) {
+  this.game.renderState = function(data) {
     var div, player;
     div = (function() {
       var _i, _len, _results;
@@ -136,11 +137,11 @@
     return $("#game-state").replaceWith('<ul class="list">' + div + '</ul>');
   };
 
-  game.update = function() {
+  this.game.update = function() {
     return load('updateGame');
   };
 
-  game.bid = function() {
+  this.game.bid = function() {
     var newBid, param;
     newBid = $('input[name="bid"]').val();
     param = {
@@ -149,14 +150,17 @@
     return _this.load('playerRaise', param);
   };
 
-  game.pass = function() {
+  this.game.pass = function() {
     load('playerFold', null);
     $('.control').attr('disabled', true);
     return $('#passbutton').addClass('btn-success');
   };
 
-  game.setCards = function(data) {
+  this.game.setCards = function(data) {
     var card, cards, i, x, _i, _len;
+    if (data.cards != null) {
+      data = data.cards;
+    }
     game.cards = {};
     i = 0;
     for (_i = 0, _len = data.length; _i < _len; _i++) {
@@ -178,28 +182,24 @@
     return $('#cards').html(cards);
   };
 
-  game.change = function() {
+  this.game.change = function() {
     var parameters, x;
-    parameters = [
-      {
-        replaced: [
-          (function() {
-            var _i, _len, _ref, _results;
-            _ref = this.replaced;
-            _results = [];
-            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-              x = _ref[_i];
-              _results.push(this.cards[x]);
-            }
-            return _results;
-          }).call(this)
-        ]
-      }
-    ];
+    parameters = {
+      replaced: (function() {
+        var _i, _len, _ref, _results;
+        _ref = this.replaced;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          x = _ref[_i];
+          _results.push(this.cards[x]);
+        }
+        return _results;
+      }).call(this)
+    };
     return load('playerChange', parameters);
   };
 
-  game.toggleCardReplace = function(i) {
+  this.game.toggleCardReplace = function(i) {
     if (__indexOf.call(game.replaced, i) < 0) {
       game.replaced.push(i);
       return $("#card-" + i).addClass('card-replace');
@@ -211,12 +211,12 @@
     }
   };
 
-  game.allIn = function() {
+  this.game.allIn = function() {
     load('playerAllIn');
     return $('#allinbutton').addClass('btn-success');
   };
 
-  game.check = function() {
+  this.game.check = function() {
     load('playerCheck');
     return $('#checkbutton').addClass('btn-success');
   };

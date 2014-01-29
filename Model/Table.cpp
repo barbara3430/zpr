@@ -410,10 +410,10 @@ std::string Table::addPlayer(std::string n)
 
 std::string  Table::playerChange(unsigned s, boost::python::list& ns){
   
-  	std::vector<unsigned> c;	
+  	std::vector<int> c;	
         for (int i = 0; i < len(ns); ++i)
 	{
-	    c.push_back(boost::python::extract<double>(ns[i]));
+	    c.push_back(boost::python::extract<int>(ns[i]));
 	}
 	
 	unsigned ind = 2;

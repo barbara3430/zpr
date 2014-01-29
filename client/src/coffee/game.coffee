@@ -34,16 +34,16 @@ $ -> $('.control').attr 'disabled', true
 			$('#checkbutton').attr 'disabled', false
 			$('#allinbutton').attr 'disabled', false
 			$('#passbutton').attr 'disabled', false
-			$('input[name="bid"]').attr 'disabled, false
+			$('input[name="bid"]').attr 'disabled', false
 		when 2
 			$('#changebutton').attr 'disabled', false
 	return true
 
 @game.finishGame = (data) =>
 	if data.won is true  # TODO check
-		notify "You win!", 3000
+		notify "You win!", 0
 	else
-		notify "You loose!", 3000, notify.warning
+		notify "You loose!", 0, notify.warning
 	@loadContent 'lobby.html'
 	@load 'updateNames'
 
@@ -59,28 +59,30 @@ $ -> $('.control').attr 'disabled', true
 	"
 	$('#player-state').html div
 
-game.renderState = (data) ->
+@game.renderState = (data) ->
 	div = for player in data
 		"<li> #{player.name}($#{player.account}) current bid: $#{player.bid}</li>"
 	div.join " "
 	$("#game-state").replaceWith '<ul class="list">' + div + '</ul>'
 
-game.update = () ->
+@game.update = () ->
 	load 'updateGame'
 
-game.bid = () =>
+@game.bid = () =>
 	newBid = $('input[name="bid"]').val()
 	param = {
 		"bid": parseInt(newBid)
 	}
 	@load 'playerRaise', param
 
-game.pass = () ->
+@game.pass = () ->
 	load 'playerFold', null
 	$('.control').attr 'disabled', true
 	$('#passbutton').addClass 'btn-success'
 
-game.setCards = (data) ->
+@game.setCards = (data) ->
+	if data.cards?
+		data = data.cards
 	game.cards = {}
 	i = 0
 	for x in data
@@ -97,11 +99,11 @@ game.setCards = (data) ->
 	cards.join ' '
 	$('#cards').html cards
 
-game.change = () ->
-	parameters = [replaced: [@cards[x] for x in @replaced]]
+@game.change = () ->
+	parameters = {replaced: @cards[x] for x in @replaced}
 	load 'playerChange', parameters
 
-game.toggleCardReplace = (i) ->
+@game.toggleCardReplace = (i) ->
 	unless i in game.replaced
 		game.replaced.push i
 		$("#card-#{i}").addClass 'card-replace'
@@ -109,9 +111,9 @@ game.toggleCardReplace = (i) ->
 		game.replaced = game.replaced.filter (id) -> id isnt i
 		$("#card-#{i}").removeClass 'card-replace'
 
-game.allIn = () ->
+@game.allIn = () ->
 	load 'playerAllIn'
 	$('#allinbutton').addClass 'btn-success'
-game.check = () ->
+@game.check = () ->
 	load 'playerCheck'
 	$('#checkbutton').addClass 'btn-success'
