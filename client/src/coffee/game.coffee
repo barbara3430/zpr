@@ -41,9 +41,9 @@ $ -> $('.control').attr 'disabled', true
 
 @game.finishGame = (data) =>
 	if data.won is true  # TODO check
-		notify "You win!", 0
+		notify "You win!", 5000
 	else
-		notify "You loose!", 0, notify.warning
+		notify "You loose!", 5000, notify.warning
 	@loadContent 'lobby.html'
 	@load 'updateNames'
 
