@@ -275,21 +275,5 @@ BOOST_PYTHON_MODULE(Model)
     def("stopTable", stopTable);          
 };
 
-BOOST_PYTHON_MODULE(GameData)
-{
-    class_<Table::GameData>("GameData")
-	.def("turnMinBet", &Table::GameData::turnMinBet)
-
-	.def("getState", &Table::GameData::getState)
-
-	.def("getStartPlayer", &Table::GameData::getStartPlayer)
-
-	.def("getPlayerTurn", &Table::GameData::getPlayerTurn)
-
-	.def("getInGame", &Table::GameData::getPlayerTurn)
-	.def("getAllInBet", &Table::GameData::getAllInBet)
-    ;
-}
-
 #endif
 

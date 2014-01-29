@@ -410,10 +410,10 @@ std::string Table::addPlayer(std::string n)
 
 std::string  Table::playerChange(unsigned s, boost::python::list& ns){
   
-  	std::vector<unsigned> c;	
+  	std::vector<int> c;	
         for (int i = 0; i < len(ns); ++i)
 	{
-	    c.push_back(boost::python::extract<unsigned>(ns[i]));
+	    c.push_back(boost::python::extract<int>(ns[i]));
 	}
 	
 	unsigned ind = 2;
@@ -455,7 +455,7 @@ std::string  Table::playerChange(unsigned s, boost::python::list& ns){
 	    for(unsigned j=0; j<v.size(); ++j)
 	    {
 			//std::cout<<"j: "<< j << " " <<v[j]<<std::endl;
-	      if(c[i]==v[j]) //zamien odpowiednia karte
+	      if((unsigned)c[i]==v[j]) //zamien odpowiednia karte
 	      {
 			  /*std::cout<<"--------------------------------------"<<std::endl;
 			  std::cout<<"zamiana"<< " " <<c[i] << " " << v[j] << " na "<<std::endl;*/
@@ -469,7 +469,7 @@ std::string  Table::playerChange(unsigned s, boost::python::list& ns){
 	//zwróć karty do deck'a
 	for(unsigned i=0; i<c.size(); ++i) 
 	{
-		deck.push_back(c[i]);
+		deck.push_back((unsigned)c[i]);
 		++cards_left;
 	}
 	//ustaw nowa reke
